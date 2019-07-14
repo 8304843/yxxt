@@ -57,7 +57,7 @@
         <!-- <li class="menu-item">
           <i class="icon el-icon-adm-help"></i>
         </li> -->
-        <li class="menu-item" @click="exit">
+        <li class="menu-item" title="退出" @click="exit">
           <i class="icon iconfont el-icon-adm-exit"></i>
         </li>
       </ul>

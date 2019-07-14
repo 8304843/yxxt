@@ -12,12 +12,16 @@
       <el-col :span='24'>
         <el-card>
           <div slot="header">
+            <el-button type="primary" title="添加学生信息" size="" icon="el-icon-edit-outline" @click="hanldeAdd()">添加</el-button>
+            <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" @click="hanldeAdd()">导入</el-button>
+            <el-input v-model="keyUser" style="width:200px;left:10px" placeholder="查询所需要的内容......"></el-input>
           </div>
           <div class="table-wrapper">
             <el-table
               v-loading="loading"
               element-loading-text="加载数据中"
               :data='tableData'
+              height="650"
               border
               :row-class-name="addRowClass">
               <el-table-column label="姓名" prop="username" align="center" width="80"></el-table-column>
@@ -27,12 +31,12 @@
                 </template>
               </el-table-column>
               <el-table-column label="学院" prop="score" align="center" width="130">
-                <template slot-scope="scope">
+                <!-- <template slot-scope="scope">
                   <score :size="36" :score="scope.row.score"></score>
-                </template>
+                </template> -->
               </el-table-column>              
               <el-table-column label="班级" prop="deliveryTime" align="center" width="160"></el-table-column>             
-              <el-table-column label="宿舍号" align="left" header-align="center">
+              <el-table-column label="宿舍号" align="left" header-align="center" width="210">
                 <template slot-scope="scope">
                   <div class="recommend-tag" v-for="(recommend, index) in scope.row.recommend" :key="index">
                     <el-tag>{{recommend}}</el-tag>
@@ -48,11 +52,23 @@
                   <span>{{ scope.row.rateTime | formatDate }}</span>
                 </template>
               </el-table-column> 
+              <el-table-column label="操作" align="center" width="180">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="
+                  (scope.$index, scope.row)">编辑</el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
             </el-table>
             <el-pagination
               style="margin-top: 16px; text-align:right;"
               layout="total, sizes, prev, pager, next, jumper"
-              :page-sizes="[5, 10, 15, 20]"
+              :page-sizes="[5, 10, 15, 20, 25]"
               :total="total"
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange">
@@ -65,7 +81,7 @@
 </template>
 <script>
   import {formatDate} from 'src/utils/utils';
-  import score from 'src/components/Score/index';
+  // import score from 'src/components/Score/index';
 
   const POSITIVE = 0;
   const NEGATIVE = 1;
@@ -98,6 +114,12 @@
           console.log(error);
         });
       },
+      handleEdit(index, row) {
+        console.log(index, row);
+      },
+      handleDelete(index, row) {
+        console.log(index, row);
+      },
       show (scope) {
         console.log(scope);
       },
@@ -125,7 +147,7 @@
       }
     },
     components: {
-      score
+      // score
     }
   };
 </script>
