@@ -5,6 +5,7 @@ import http from './http';
 import store from './store/index';
 import router from './router/index';
 import Root from './Root.vue';
+import axios from 'axios';
 
 // 引入公共样式表
 import 'normalize.css';
@@ -36,7 +37,7 @@ import 'src/assets/styles/iconfont.css';
 Vue.use(ElementUI);
 
 Vue.component('chart', ECharts);
-
+Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

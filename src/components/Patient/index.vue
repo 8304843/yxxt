@@ -19,7 +19,7 @@
           </div>
           <div class="float-right">
             <el-input size="mini" @keyup.enter.native="search">
-              <i slot="suffix" class="el-input__icon el-icon-search" style="cursor: pointer;" @click="search"></i>
+              <i slot="suffix" class="el-input__icon el-icon-search" style="cursor: pointer;" @click="search">dsad</i>
             </el-input>
           </div>
         </mt-card-header>

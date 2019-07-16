@@ -13,10 +13,10 @@
         <el-card>
           <div slot="header">
             <el-button type="primary" title="添加学生信息" size="" icon="el-icon-edit-outline" @click="hanldeAdd()">添加</el-button>
-            <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" @click="hanldeAdd()">导入</el-button>
-            <el-input v-model="keyUser" style="width:200px;left:10px" placeholder="查询所需要的内容......"></el-input>
+            <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" @click="open()">导入</el-button>
+            <el-input  style="width:200px;left:10px" placeholder="查询所需要的内容......"></el-input>
           </div>
-          <div class="table-wrapper">
+          <div class="table">
             <el-table
               v-loading="loading"
               element-loading-text="加载数据中"
@@ -24,40 +24,37 @@
               height="650"
               border
               :row-class-name="addRowClass">
-              <el-table-column label="姓名" prop="username" align="center" width="80"></el-table-column>
-              <el-table-column label="头像" align="center" width="80">
+              <el-table-column label="姓名" prop="username" align="center" width="120"></el-table-column>
+              <el-table-column label="头像" align="center" width="120">
                 <template slot-scope="scope">
                   <img :src="scope.row.avatar" alt="用户头像" width="42" height="42" style="border-radius: 50%;">
                 </template>
               </el-table-column>
-              <el-table-column label="学院" prop="score" align="center" width="130">
-                <!-- <template slot-scope="scope">
-                  <score :size="36" :score="scope.row.score"></score>
-                </template> -->
-              </el-table-column>              
-              <el-table-column label="班级" prop="deliveryTime" align="center" width="160"></el-table-column>             
-              <el-table-column label="宿舍号" align="left" header-align="center" width="210">
+              <el-table-column label="宿舍信息" align="left" header-align="center" width="210">
                 <template slot-scope="scope">
                   <div class="recommend-tag" v-for="(recommend, index) in scope.row.recommend" :key="index">
                     <el-tag>{{recommend}}</el-tag>
                   </div>
                 </template>
-              </el-table-column>
-              <el-table-column label="问候语" prop="text" align="left" header-align="center"></el-table-column>
-              <el-table-column label="缴费情况" align="center" width="80">
+              </el-table-column> 
+              <el-table-column label="问候语" prop="text" align="left" width="" header-align="center"></el-table-column>
+              <el-table-column label="缴费情况" align="center" width="110%">
                 <template slot-scope="scope">{{scope.row.rateType | rateTypeToText}}</template>
               </el-table-column>
-              <el-table-column label="录入时间" align="center" width="160">
+              <el-table-column label="录入时间" align="center" width="180%">
                 <template slot-scope="scope">
                   <span>{{ scope.row.rateTime | formatDate }}</span>
                 </template>
               </el-table-column> 
-              <el-table-column label="操作" align="center" width="180">
+              <el-table-column label="操作" align="center" width="250">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  @click="
-                  (scope.$index, scope.row)">编辑</el-button>
+                 >打印</el-button>
+                <el-button
+                  size="mini"
+                  @click="handleEdit(scope.$index, scope.row)"
+                  >编辑</el-button>
                 <el-button
                   size="mini"
                   type="danger"
@@ -77,25 +74,41 @@
         </el-card>
       </el-col>
     </el-row>
+    <AddUser :dialogAdd="dialogAdd" @update="getUserInfo"></AddUser>
+    <EditUser :dialogEdit="dialogEdit" :form="form" ></EditUser>
   </div>
 </template>
 <script>
   import {formatDate} from 'src/utils/utils';
-  // import score from 'src/components/Score/index';
+  import EditUser from '../edit/EditUser';
+  import AddUser from '../edit/AddUser';
+  import axios from "axios";
 
   const POSITIVE = 0;
   const NEGATIVE = 1;
   export default {
-    created () {
-      this.getTableData();
-    },
+    name : 'basic',
     data () {
       return {
         tableData: [],
         loading: true,
         pagesize: 10,
         currentpage: 1,
-        total: 0
+        total: 0,
+        dialogEdit:{
+          show:false,
+        },
+        dialogAdd:{
+          show:false
+        },
+        form:{    //编辑信息
+          date:'',
+          name:'',
+          email:'',
+          title:'',
+          evaluate:'',
+          state:''
+        },
       }
     },
     methods: {
@@ -114,14 +127,33 @@
           console.log(error);
         });
       },
-      handleEdit(index, row) {
-        console.log(index, row);
+      getUserInfo() {
+        // this.$axios.get('http://localhost:7999/data').then(res => {
+        // console.log(res)
+        //     this.tableData = res.data
+        // })
+      },
+      handleEdit(index,row){  //编辑
+        this.dialogEdit.show = true; //显示弹
+        this.form = {
+            // date:row.date,
+            // name:row.name,
+            // email:row.email,
+            // title:row.title,
+            // evaluate:row.evaluate,
+            // state:row.state,
+            // id:row.id
+        }
+      // console.log(row)
+      },
+      hanldeAdd(){  //添加
+        this.dialogAdd.show = true;
       },
       handleDelete(index, row) {
         console.log(index, row);
       },
       show (scope) {
-        console.log(scope);
+        console.log(scope); 
       },
       handleSizeChange (value) {
         this.pagesize = value;
@@ -146,12 +178,27 @@
         return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
       }
     },
+    created () {
+      this.getTableData();
+      this.getUserInfo();
+    },
     components: {
       // score
+      EditUser,
+      AddUser
     }
   };
 </script>
-<style lang='scss'>
+<style lang='scss' scoped>
+h1{
+    font-size: 30px;
+    color: #333;
+    text-align: center;
+    margin: 0 auto;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #409EFF;
+    width: 300px
+}
   .basic {
     .el-table {
       .warning-row {

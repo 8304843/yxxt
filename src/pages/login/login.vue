@@ -53,7 +53,7 @@
 </template>
 <script>
   import validateCode from 'src/components/ValidateCode/index';
-
+  import axios from "axios";
   export default {
     created () {
     },
@@ -114,8 +114,16 @@
          *  将请求返回的Token对象存到store中
          *  @Token  token对象
         */
-
-        let token = 'a94756da-2962-40ae-bdea-787fd02c9d92';
+        // axios.post('http://192.168.0.128:8080/ac/public/api/v1.0/token/get?username=superadmin&password=6077bb478eacfdd3b1bc925147d2154b',{
+          // username:this.username,
+          // password:this.password
+        // }).then(response => {
+        //   localStorage.setItem("token",response.data.data.token)
+        //   console.log(response)
+        //   // this.$router.push('/home');
+        // });
+        
+        let token = '59df5e55-5c45-4f24-bd3f-b953709ea11e';
 
         this.$store.commit('SET_TOKEN', token);
         this.$router.push('/home');
