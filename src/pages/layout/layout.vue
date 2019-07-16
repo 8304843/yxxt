@@ -2,7 +2,7 @@
   <div class="layout">
     <div class="siderbar-wrapper" :style="{width: this.isCollapsed?'64px':'200px'}">
       <div class="logo-wrapper">
-        logo
+        <img src="../../assets/img/logo.png">
       </div>
       <el-menu
         background-color="#424f63"
