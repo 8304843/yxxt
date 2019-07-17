@@ -13,7 +13,7 @@
         <el-card>
           <div slot="header">
             <el-button type="primary" title="添加学生信息" size="" icon="el-icon-edit-outline" @click="hanldeAdd()">添加</el-button>
-            <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" @click="open()">导入</el-button>
+            <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" >导入</el-button>
             <el-input  style="width:200px;left:10px" placeholder="查询所需要的内容......"></el-input>
           </div>
           <div class="table">
@@ -22,9 +22,14 @@
               element-loading-text="加载数据中"
               :data='tableData'
               height="650"
-              border
-              :row-class-name="addRowClass">
-              <el-table-column label="姓名" prop="username" align="center" width="120"></el-table-column>
+              border>
+              <el-table-column
+                type="index"
+                label="序号"
+                align="center"
+                width="60">
+              </el-table-column>
+              <el-table-column label="姓名" prop="name" align="center" width="120"></el-table-column>
               <el-table-column label="头像" align="center" width="120">
                 <template slot-scope="scope">
                   <img :src="scope.row.avatar" alt="用户头像" width="42" height="42" style="border-radius: 50%;">
@@ -66,15 +71,13 @@
               style="margin-top: 16px; text-align:right;"
               layout="total, sizes, prev, pager, next, jumper"
               :page-sizes="[5, 10, 15, 20, 25]"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange">
+              :total="total">
             </el-pagination>
           </div> 
         </el-card>
       </el-col>
     </el-row>
-    <AddUser :dialogAdd="dialogAdd" @update="getUserInfo"></AddUser>
+    <AddUser :dialogAdd="dialogAdd" @="Mes_Show"></AddUser>
     <EditUser :dialogEdit="dialogEdit" :form="form" ></EditUser>
   </div>
 </template>
@@ -112,26 +115,12 @@
       }
     },
     methods: {
-      getTableData () {
-        this.axios.get(`getTableData?per_page=${this.pagesize}&cur_page=${this.currentpage}`)
-        .then(data => {
-          if (data.errno === 0) {
-            this.tableData = data.data.table;
-            this.total = data.data.total;
-            this.loading = false;
-          } else {
-            console.log(data.msg);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      },
-      getUserInfo() {
-        // this.$axios.get('http://localhost:7999/data').then(res => {
-        // console.log(res)
-        //     this.tableData = res.data
-        // })
+      Mes_Show (scope) {
+        axios.post(`http://localhost:8081/yxxtcs/Mes_Show.php`).then((res)=> {
+          console.log(res.data)
+          this.tableData = res.data.data
+          this.loading = false;            
+        }) 
       },
       handleEdit(index,row){  //编辑
         this.dialogEdit.show = true; //显示弹
@@ -149,25 +138,9 @@
       hanldeAdd(){  //添加
         this.dialogAdd.show = true;
       },
-      handleDelete(index, row) {
+      handleDelete(index, row) {//删除
         console.log(index, row);
       },
-      show (scope) {
-        console.log(scope); 
-      },
-      handleSizeChange (value) {
-        this.pagesize = value;
-        this.getTableData();
-      },
-      handleCurrentChange (value) {
-        this.currentpage = value;
-        this.getTableData();
-      },
-      addRowClass ({row, rowIndex}) {
-        if (row.rateType === NEGATIVE) {
-          return 'warning-row';
-        }
-      }
     },
     filters: {
       rateTypeToText (rateType) {
@@ -179,8 +152,7 @@
       }
     },
     created () {
-      this.getTableData();
-      this.getUserInfo();
+      this.Mes_Show();
     },
     components: {
       // score
@@ -188,6 +160,7 @@
       AddUser
     }
   };
+
 </script>
 <style lang='scss' scoped>
 h1{

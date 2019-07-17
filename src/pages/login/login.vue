@@ -53,7 +53,7 @@
 </template>
 <script>
   import validateCode from 'src/components/ValidateCode/index';
-  import axios from "axios";
+  import axios from "axios"
   export default {
     created () {
     },
@@ -114,19 +114,25 @@
          *  将请求返回的Token对象存到store中
          *  @Token  token对象
         */
-        // axios.post('http://192.168.0.128:8080/ac/public/api/v1.0/token/get?username=superadmin&password=6077bb478eacfdd3b1bc925147d2154b',{
-          // username:this.username,
-          // password:this.password
-        // }).then(response => {
-        //   localStorage.setItem("token",response.data.data.token)
-        //   console.log(response)
-        //   // this.$router.push('/home');
-        // });
-        
-        let token = '59df5e55-5c45-4f24-bd3f-b953709ea11e';
+        var fd = new FormData()
+        fd.append("flag","Login")
+        fd.append("username",this.form.username)
+        fd.append("password",this.form.password)
+        axios.post(`http://localhost:8081/yxxtcs/login.php`,fd).then((res)=> {
+          console.log(res.data)
+          // localStorage.setItem('ms_username',this.form.username);
+          // localStorage.setItem('ms_department',res.data.department);
+          if(res.data.status == "success"){
+            this.$router.push('/home');
+          }else{
+            alert("账号或者密码错误！")
+            this.form.password = ''
+          }              
+        })
+        let token = 'a94756da-2962-40ae-bdea-787fd02c9d92';
 
         this.$store.commit('SET_TOKEN', token);
-        this.$router.push('/home');
+        // this.$router.push('/home');
       }
     },
     components: {
