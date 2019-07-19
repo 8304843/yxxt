@@ -67,12 +67,19 @@ export default {
   data () {
     return {
       formDate:{
-        date:'',
-        name:'',
-        email:'',
-        title:'',
-        evaluate:'',
-        state:''
+        name:'',//姓名
+        province:'',//省份
+        num:'',//考生号
+        sex:'',//性别
+        message:'',//身份证号
+        xueyuan:'',//二级学院
+        dorm:'',//宿舍号
+        zy : '',//专业
+        address :'',//邮寄地址
+        code :'',//邮政编码
+        phone :'',//联系电话
+        receive :'',//收件人
+        result : '',//投档成绩
       },
       formrules:{
         // date:[{required:true,message:"日期不能为空",trigger:"blur"}],
@@ -83,27 +90,9 @@ export default {
   methods:{
     creatRefresh(response) {
       console.log(response)
-      // this.getStuffInfoData()
     },
     dialogFormAdd(formdong) {
-        // this.$refs[formdong].validate((valid) => {
-        //   if (valid) {
-        //     this.$axios.post('http://localhost:8081/yxxtcs/student.php',this.formDate).then(res => {
-        //         this.$message({
-        //             type:"success",
-        //             message:"添加信息成功"
-        //         })
-        //         this.dialogAdd.show = false;
-        //         this.$emit('update');
- 
-        //     })
-        //     this.formDate  = ""
-        //   } else {
-        //     console.log('error submit!!');
-        //     return false;
-        //   }
-        // })
-         var fd = new FormData()
+        var fd = new FormData()
         fd.append("name",this.formDate.name)
         fd.append("province",this.formDate.province)
         fd.append("num",this.formDate.num)
@@ -117,12 +106,21 @@ export default {
         fd.append("phone",this.formDate.phone)
         fd.append("receive",this.formDate.receive)
         fd.append("result",this.formDate.result)
-        // console.log(fd)
-        axios.post(`http://localhost:8081/yxxtcs/student.php`,fd).then(this.creatRefresh)
-        this.$message({
-          type: 'success',
-          message: '新建成功!'
-        });
+
+        this.$refs[formdong].validate((valid) => {
+        if (valid) {
+          axios.post(`http://localhost:8081/yxxtcs/student.php`,fd).then(this.creatRefresh)
+          this.$message({
+            type: 'success',
+            message: '新建成功!'
+          });
+          this.dialogAdd.show = false;
+          this.$emit('update');
+        }else {
+            console.log('error submit!!');
+            return false;
+          }
+      })
     }
   }
 }

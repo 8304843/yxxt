@@ -29,19 +29,21 @@
                 align="center"
                 width="60">
               </el-table-column>
-              <el-table-column label="姓名" prop="name" align="center" width="120"></el-table-column>
+              <el-table-column  label="姓名" prop="name" align="center" width="120">
+                <template slot-scope="scope">
+                    <span>{{ scope.row.name }}</span>
+                </template>
+              </el-table-column>
               <el-table-column label="头像" align="center" width="120">
                 <template slot-scope="scope">
                   <img :src="scope.row.avatar" alt="用户头像" width="42" height="42" style="border-radius: 50%;">
                 </template>
               </el-table-column>
-              <el-table-column label="宿舍信息" align="left" header-align="center" width="210">
-                <template slot-scope="scope">
-                  <div class="recommend-tag" v-for="(recommend, index) in scope.row.recommend" :key="index">
-                    <el-tag>{{recommend}}</el-tag>
-                  </div>
+              <el-table-column label="宿舍信息" align="center" header-align="center" width="210">
+                <template  slot-scope="scope">
+                  <span>{{ scope.row.name}}</span>
                 </template>
-              </el-table-column> 
+              </el-table-column>  
               <el-table-column label="问候语" prop="text" align="left" width="" header-align="center"></el-table-column>
               <el-table-column label="缴费情况" align="center" width="110%">
                 <template slot-scope="scope">{{scope.row.rateType | rateTypeToText}}</template>
@@ -71,14 +73,16 @@
               style="margin-top: 16px; text-align:right;"
               layout="total, sizes, prev, pager, next, jumper"
               :page-sizes="[5, 10, 15, 20, 25]"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
               :total="total">
             </el-pagination>
           </div> 
         </el-card>
       </el-col>
     </el-row>
-    <AddUser :dialogAdd="dialogAdd" @="Mes_Show"></AddUser>
-    <EditUser :dialogEdit="dialogEdit" :form="form" ></EditUser>
+    <AddUser :dialogAdd="dialogAdd" @update="Mes_Show"></AddUser>
+    <EditUser :dialogEdit="dialogEdit" :form="form" @updateEdit="Mes_Show"></EditUser>
   </div>
 </template>
 <script>
@@ -104,44 +108,77 @@
         dialogAdd:{
           show:false
         },
-        form:{    //编辑信息
-          date:'',
-          name:'',
-          email:'',
-          title:'',
-          evaluate:'',
-          state:''
+        form:{   //编辑信息
+          id:'',
+          name:'',//姓名
+          province:'',//省份
+          num:'',//考生号
+          sex:'',//性别
+          message:'',//身份证号
+          xueyuan:'',//二级学院
+          dorm:'',//宿舍号
+          zy : '',//专业
+          address :'',//邮寄地址
+          code :'',//邮政编码
+          phone :'',//联系电话
+          receive :'',//收件人
+          result : '',//投档成绩
         },
       }
     },
     methods: {
       Mes_Show (scope) {
         axios.post(`http://localhost:8081/yxxtcs/Mes_Show.php`).then((res)=> {
-          console.log(res.data)
           this.tableData = res.data.data
           this.loading = false;            
         }) 
       },
-      handleEdit(index,row){  //编辑
+      handleEdit(index,row){ //编辑
         this.dialogEdit.show = true; //显示弹
         this.form = {
-            // date:row.date,
-            // name:row.name,
-            // email:row.email,
-            // title:row.title,
-            // evaluate:row.evaluate,
-            // state:row.state,
-            // id:row.id
+          province:row.province,
+          num:row.num,
+          id:row.id,
+          name:row.name,
+          sex:row.sex,
+          message:row.message,
+          xueyuan:row.xueyuan,
+          dorm:row.dorm,
+          zy : row.zy,
+          address :row.address,
+          code :row.code,
+          phone :row.phone,
+          receive :row.receive,
+          result : row.result,
         }
-      // console.log(row)
+        this.Mes_Show();
       },
       hanldeAdd(){  //添加
         this.dialogAdd.show = true;
       },
       handleDelete(index, row) {//删除
-        console.log(index, row);
+      var fd = new FormData()
+      fd.append("id",row.id)
+        this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Del.php`,fd).then(res =>{
+            this.$message({
+                type:"success",
+                message:"删除信息成功"
+            })
+            this.Mes_Show()    //删除数据，更新视图
+        })
       },
-    },
+      handleSizeChange (value) {
+        this.pagesize = value;
+      },
+      handleCurrentChange (value) {
+        this.currentpage = value;
+      },
+      addRowClass ({row, rowIndex}) {
+      if (row.rateType === NEGATIVE) {
+        return 'warning-row';
+      }
+  }
+},
     filters: {
       rateTypeToText (rateType) {
         return rateType === POSITIVE ? '已缴费' : '未缴费';
@@ -190,3 +227,5 @@ h1{
     }
   }
 </style>
+
+

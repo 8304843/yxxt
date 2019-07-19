@@ -2,51 +2,44 @@
   <div class="hello">
     <el-dialog title="编辑学生信息" :modal-append-to-body='false' :visible.sync="dialogEdit.show">
       <el-form :model="form" ref="formEdit" label-width="100px" :rules="formrules">
-        <el-form-item label="日期" prop="date">
-            <el-date-picker
-              v-model="form.date"
-              type="date"
-              placeholder="选择日期">
-            </el-date-picker>
-        </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email"></el-input>
+        <el-form-item label="省份" prop="province">
+          <el-input v-model="form.province"></el-input>
         </el-form-item>
-        <el-form-item label="省份" prop="title">
-          <el-input v-model="form.title"></el-input>
+        <el-form-item label="考生号" prop="num">
+          <el-input v-model="form.num"></el-input>
         </el-form-item>
-        <el-form-item label="考生号" prop="evaluate">
-          <el-input v-model="form.evaluate"></el-input>
+        <el-form-item label="性别" prop="sex">
+          <el-input v-model="form.sex"></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="身份证号" prop="message">
+          <el-input v-model="form.message"></el-input>
         </el-form-item>
-        <el-form-item label="身份证号" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="二级学院" prop="xueyuan">
+          <el-input v-model="form.xueyuan"></el-input>
         </el-form-item>
-        <el-form-item label="二级学院" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="宿舍号" prop="dorm">
+          <el-input v-model="form.dorm"></el-input>
         </el-form-item>
-        <el-form-item label="录取专业" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="录取专业" prop="zy">
+          <el-input v-model="form.zy"></el-input>
         </el-form-item>
-        <el-form-item label="邮寄地址" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="邮寄地址" prop="address">
+          <el-input v-model="form.address"></el-input>
         </el-form-item>
-        <el-form-item label="邮政编码" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="邮政编码" prop="code">
+          <el-input v-model="form.code"></el-input>
         </el-form-item>
-        <el-form-item label="联系电话" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="form.phone"></el-input>
         </el-form-item>
-        <el-form-item label="收件人" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="收件人" prop="receive">
+          <el-input v-model="form.receive"></el-input>
         </el-form-item>
-        <el-form-item label="投档成绩" prop="state">
-          <el-input v-model="form.state"></el-input>
+        <el-form-item label="投档成绩" prop="result">
+          <el-input v-model="form.result"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -58,6 +51,8 @@
 </template>
  
 <script>
+import axios from "axios";
+
 export default {
   name: 'HelloWorld',
   props:{
@@ -67,17 +62,32 @@ export default {
   data () {
     return {
       formrules:{
-        date:[{required:true,message:"日期不能为空",trigger:"blur"}],
+        // date:[{required:true,message:"日期不能为空",trigger:"blur"}],
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
-        email:[{required:true,message:"邮箱不能为空",trigger:"blur"}],
+        // email:[{required:true,message:"邮箱不能为空",trigger:"blur"}],
       }
     }
   },
   methods:{
     dialogFormEdit(formEdit) {
+      var fd = new FormData()
+      fd.append("name",this.form.name)
+      fd.append("id",this.form.id)
+      fd.append("province",this.form.province)
+      fd.append("num",this.form.num)
+      fd.append("sex",this.form.sex)
+      fd.append("message",this.form.message)
+      fd.append("xueyuan",this.form.xueyuan)
+      fd.append("dorm",this.form.dorm)
+      fd.append("zy",this.form.zy)
+      fd.append("address",this.form.address)
+      fd.append("code",this.form.code)
+      fd.append("phone",this.form.phone)
+      fd.append("receive",this.form.receive)
+      fd.append("result",this.form.result)
         this.$refs[formEdit].validate((valid) => {
           if (valid) {
-            this.$axios.put(`http://localhost:3000/data/${this.form.id}`,this.form).then(res => {
+            this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Change.php`,fd).then(res => {
                 this.$message({
                     type:"success",
                     message:"编辑信息成功"
