@@ -13,7 +13,7 @@
         <el-card>
           <div slot="header">
             <el-button type="primary" title="添加学生信息" size="" icon="el-icon-edit-outline" @click="hanldeAdd()">添加</el-button>
-            <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" >导入</el-button>
+            <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" @click="enter()">导入</el-button>
             <el-input  style="width:200px;left:10px" placeholder="查询所需要的内容......"></el-input>
           </div>
           <div class="table">
@@ -83,6 +83,27 @@
     </el-row>
     <AddUser :dialogAdd="dialogAdd" @update="Mes_Show"></AddUser>
     <EditUser :dialogEdit="dialogEdit" :form="form" @updateEdit="Mes_Show"></EditUser>
+    <el-dialog title="人员导入" :visible.sync="dialogFormUpload" :modal-append-to-body='false' width="25%">
+        <el-upload
+          class="upload-demo"
+          :on-success="success"
+          :on-exceed="fileExceed"
+          :on-change="onchangeFunc"
+          drag
+          :auto-upload="false"
+          ref="upload"
+          :limit="1"
+          :action="target"
+          multiple>
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传xlsx、lsx文件</div>
+        </el-upload>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormUpload = false">取 消</el-button>
+         <el-button type="primary" @click="upload()">导 入</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -97,6 +118,8 @@
     name : 'basic',
     data () {
       return {
+        dialogFormUpload:false,
+        target:`http://localhost:8081/yxxtcs/people_upload.php`,
         tableData: [],
         loading: true,
         pagesize: 10,
@@ -167,6 +190,42 @@
             this.Mes_Show()    //删除数据，更新视图
         })
       },
+      //选择文件时触发
+    onchangeFunc(file,fileList){
+      console.log(fileList)
+      this.fileList = fileList
+    },
+    //导入按钮
+    enter(){
+      this.dialogFormUpload = true
+    },
+    //导入按钮
+    upload(){
+      this.dialogFormUpload = false
+      if(this.$refs.upload.uploadFiles){
+        this.$refs.upload.submit() // 上传
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '您未添加任何文件！'
+        });
+      }
+    },
+    // 超出上传限制提示框
+    fileExceed (e) {
+      let options = {
+        message: '已添加文件！',
+        type: 'warning',
+        duration: 2000,
+      }
+      Message(options);
+    },
+    // 上传成功回调
+    success (res) {
+      // this.$emit('uploadSuccess',res);
+      console.log(res)
+      this.Mes_Show()
+    },
       handleSizeChange (value) {
         this.pagesize = value;
       },
