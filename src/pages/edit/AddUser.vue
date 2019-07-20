@@ -30,6 +30,16 @@
         <el-form-item label="宿舍号" prop="dorm">
           <el-input v-model="formDate.dorm"></el-input>
         </el-form-item>
+        <el-form-item label="缴费情况" prop="payment">
+        <el-select v-model="value" style="width:100%;" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </el-form-item>
         <el-form-item label="录取专业" prop="zy">
           <el-input v-model="formDate.zy"></el-input>
         </el-form-item>
@@ -66,6 +76,7 @@ export default {
   },
   data () {
     return {
+      restaurants: [],
       formDate:{
         name:'',//姓名
         province:'',//省份
@@ -81,6 +92,14 @@ export default {
         receive :'',//收件人
         result : '',//投档成绩
       },
+      options: [{
+          value: '已缴费',
+          label: '已缴费'
+        }, {
+          value: '未缴费',
+          label: '未缴费'     
+        }],
+        value: '',
       formrules:{
         // date:[{required:true,message:"日期不能为空",trigger:"blur"}],
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
@@ -106,6 +125,7 @@ export default {
         fd.append("phone",this.formDate.phone)
         fd.append("receive",this.formDate.receive)
         fd.append("result",this.formDate.result)
+        fd.append("payment",this.value)
 
         this.$refs[formdong].validate((valid) => {
         if (valid) {
@@ -113,7 +133,7 @@ export default {
           this.$message({
             type: 'success',
             message: '新建成功!'
-          });
+          }); 
           this.dialogAdd.show = false;
           this.$emit('update');
         }else {
@@ -121,12 +141,17 @@ export default {
             return false;
           }
       })
-    }
+    },
+  },
+  mounted() {
+   
   }
 }
 </script>
  
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-   
+   .el-select .el-input {
+    width: 130px;
+  }
 </style>

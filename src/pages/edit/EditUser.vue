@@ -23,6 +23,16 @@
         <el-form-item label="宿舍号" prop="dorm">
           <el-input v-model="form.dorm"></el-input>
         </el-form-item>
+         <el-form-item label="缴费情况" prop="payment">
+          <el-select v-model="form.payment" style="width:100%;" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </el-form-item>
         <el-form-item label="录取专业" prop="zy">
           <el-input v-model="form.zy"></el-input>
         </el-form-item>
@@ -61,6 +71,14 @@ export default {
   },
   data () {
     return {
+      options: [{
+          value: '已缴费',
+          label: '已缴费'
+        }, {
+          value: '未缴费',
+          label: '未缴费'     
+        }],
+        value: '',
       formrules:{
         // date:[{required:true,message:"日期不能为空",trigger:"blur"}],
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
@@ -85,6 +103,7 @@ export default {
       fd.append("phone",this.form.phone)
       fd.append("receive",this.form.receive)
       fd.append("result",this.form.result)
+      fd.append("payment",this.form.payment)
         this.$refs[formEdit].validate((valid) => {
           if (valid) {
             this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Change.php`,fd).then(res => {
