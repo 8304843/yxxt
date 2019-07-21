@@ -35,10 +35,10 @@
                   <img :src="scope.row.avatar" alt="用户头像" width="42" height="42" style="border-radius: 50%;">
                 </template>
               </el-table-column>
-              <el-table-column label="考生号" prop="num" align="center" width="190%"></el-table-column>
-              <el-table-column label="二级学院" prop="xueyuan" align="center"  width="190%"></el-table-column>  
-              <el-table-column label="录取专业" prop="zy" align="center"  width="190%"></el-table-column>   
-              <el-table-column label="宿舍信息" prop="dorm" align="center" width="190%"></el-table-column> 
+              <el-table-column label="考生号" prop="num" align="center" width="190%" header-align="center"></el-table-column>
+              <el-table-column label="二级学院" prop="xueyuan" align="center" header-align="center" width="190%"></el-table-column>  
+              <el-table-column label="录取专业" prop="zy" align="center" header-align="center" width="190%"></el-table-column>   
+              <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="190%"></el-table-column> 
               <el-table-column label="缴费情况" prop="payment" align="center" width="120%"></el-table-column>
               <el-table-column label="录入时间" prop="date" align="center" width="170%"></el-table-column> 
               <el-table-column label="操作" align="center" width="250%">
@@ -144,7 +144,7 @@
           receive :'',//收件人
           result : '',//投档成绩
           payment:'',//缴费情况
-          date:'',
+          data:'',
         },
       }
     },
@@ -229,15 +229,15 @@
             if(user.payment.includes(keyUser)) {//按缴费情况查找
                 return user
             }
-            // if(user.dorm.includes(keyUser)) {//按宿舍信息查找
-            //     return user
-            // }
-            // if(user.zy.includes(keyUser)) {//按录取专业查找
-            //     return user
-            // }
-            if(user.zy.includes(keyUser)) {//按录入时间查找
+            if(user.dorm.includes(keyUser)) {//按宿舍信息查找
                 return user
             }
+            if(user.zy.includes(keyUser)) {//按录取专业查找
+                return user
+            }
+            // if(user.data.includes(keyUser)) {//按录入时间查找
+            //     return user
+            // }
             if(user.sex.includes(keyUser)) {//按性别查找
                 return user
             }
