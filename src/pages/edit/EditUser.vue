@@ -80,9 +80,18 @@ export default {
         }],
         value: '',
       formrules:{
-        // date:[{required:true,message:"日期不能为空",trigger:"blur"}],
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
-        // email:[{required:true,message:"邮箱不能为空",trigger:"blur"}],
+        province:[{required:true,message:"省份不能为空",trigger:"blur"}],
+        num:[{required:true,message:"考生号不能为空",trigger:"blur"}],
+        sex:[{required:true,message:"性别不能为空",trigger:"blur"}],
+        message:[{required:true,message:"身份证号不能为空",trigger:"blur"}],
+        xueyuan:[{required:true,message:"二级学院不能为空",trigger:"blur"}],
+        zy:[{required:true,message:"录取专业不能为空",trigger:"blur"}],
+        address:[{required:true,message:"邮寄地址不能为空",trigger:"blur"}],
+        code:[{required:true,message:"邮政编码不能为空",trigger:"blur"}],
+        phone:[{required:true,message:"联系电话不能为空",trigger:"blur"}],
+        receive:[{required:true,message:"收件人不能为空",trigger:"blur"}],
+        result:[{required:true,message:"投档成绩不能为空",trigger:"blur"}],
       }
     }
   },

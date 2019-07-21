@@ -14,14 +14,14 @@
           <div slot="header">
             <el-button type="primary" title="添加学生信息" size="" icon="el-icon-edit-outline" @click="hanldeAdd()">添加</el-button>
             <el-button type="primary" title="导入学生信息" size="" icon="el-icon-edit-outline" @click="enter()">导入</el-button>
-            <el-input  style="width:200px;left:10px" placeholder="查询所需要的内容......"></el-input>
+            <el-input  style="width:200px;left:10px" title="可按姓名、学号、专业、宿舍信息、缴费情况查找"  v-model="keyUser"  placeholder="查询所需要的内容......"></el-input>
           </div>
           <div class="table">
             <el-table
               v-loading="loading"
               element-loading-text="加载数据中"
-              :data='tableData'
               height="650"
+              :data="searchUserinfo(keyUser)"
               border>
               <el-table-column
                 type="index"
@@ -29,17 +29,19 @@
                 align="center"
                 width="60">
               </el-table-column>
-              <el-table-column  label="姓名" prop="name" align="center" width="120"></el-table-column>
-              <el-table-column label="头像" align="center" width="120">
+              <el-table-column  label="姓名" prop="name" align="center" width="120%"></el-table-column>
+              <el-table-column label="头像" align="center" width="120" height="200">
                 <template slot-scope="scope">
                   <img :src="scope.row.avatar" alt="用户头像" width="42" height="42" style="border-radius: 50%;">
                 </template>
               </el-table-column>
-              <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="210"></el-table-column>  
-              <el-table-column label="问候语" prop="text" align="left" width="" header-align="center"></el-table-column>
-              <el-table-column label="缴费情况" prop="payment" align="center" width="110%"></el-table-column>
-              <el-table-column label="录入时间" align="center" width="180%"></el-table-column> 
-              <el-table-column label="操作" align="center" width="250">
+              <el-table-column label="考生号" prop="num" align="center" width="190%" header-align="center"></el-table-column>
+              <el-table-column label="二级学院" prop="xueyuan" align="center" header-align="center" width="190%"></el-table-column>  
+              <el-table-column label="录取专业" prop="zy" align="center" header-align="center" width="190%"></el-table-column>   
+              <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="190%"></el-table-column> 
+              <el-table-column label="缴费情况" prop="payment" align="center" width="120%"></el-table-column>
+              <el-table-column label="录入时间" prop="data" align="center" width="170%"></el-table-column> 
+              <el-table-column label="操作" align="center" width="250%">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
@@ -94,7 +96,6 @@
   </div>
 </template>
 <script>
-  import {formatDate} from 'src/utils/utils';
   import EditUser from '../edit/EditUser';
   import AddUser from '../edit/AddUser';
   import axios from "axios";
@@ -112,6 +113,7 @@
         pagesize: 10,
         currentpage: 1,
         total: 0,
+        keyUser:'',
         dialogEdit:{
           show:false,
         },
@@ -141,6 +143,8 @@
           phone :'',//联系电话
           receive :'',//收件人
           result : '',//投档成绩
+          payment:'',//缴费情况
+          data:'',
         },
       }
     },
@@ -185,6 +189,7 @@
           phone :row.phone,
           receive :row.receive,
           result : row.result,
+          payment: row.payment
         }
         this.Mes_Show();
       },
@@ -192,16 +197,52 @@
         this.dialogAdd.show = true;
       },
       handleDelete(index, row) {//删除
-      var fd = new FormData()
-      fd.append("id",row.id)
-        this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Del.php`,fd).then(res =>{
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          var fd = new FormData()
+          fd.append("id",row.id)
+          this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Del.php`,fd).then(res =>{
             this.$message({
                 type:"success",
                 message:"删除信息成功"
             })
             this.Mes_Show()    //删除数据，更新视图
         })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
       },
+       searchUserinfo(keyUser) {
+        return this.tableData.filter((user) => {
+            if(user.name.includes(keyUser)) {//按姓名查找
+                return user
+            }
+            if(user.num.includes(keyUser)) {//按学号查找
+                return user
+            }
+            if(user.payment.includes(keyUser)) {//按缴费情况查找
+                return user
+            }
+            if(user.dorm.includes(keyUser)) {//按宿舍信息查找
+                return user
+            }
+            if(user.zy.includes(keyUser)) {//按录取专业查找
+                return user
+            }
+            // if(user.data.includes(keyUser)) {//按录入时间查找
+            //     return user
+            // }
+            if(user.sex.includes(keyUser)) {//按性别查找
+                return user
+            }
+        })
+    },
       //选择文件时触发
     onchangeFunc(file,fileList){
       console.log(fileList)

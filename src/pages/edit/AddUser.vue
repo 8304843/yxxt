@@ -19,7 +19,14 @@
           <el-input v-model="formDate.num"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
-          <el-input v-model="formDate.sex"></el-input>
+        <el-select v-model="sex" style="width:100%;" placeholder="请选择">
+          <el-option
+            v-for="item in options1"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         </el-form-item>
         <el-form-item label="身份证号" prop="message">
           <el-input v-model="formDate.message"></el-input>
@@ -31,7 +38,7 @@
           <el-input v-model="formDate.dorm"></el-input>
         </el-form-item>
         <el-form-item label="缴费情况" prop="payment">
-        <el-select v-model="value" style="width:100%;" placeholder="请选择">
+        <el-select v-model="payment" style="width:100%;" placeholder="请选择">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -91,18 +98,36 @@ export default {
         phone :'',//联系电话
         receive :'',//收件人
         result : '',//投档成绩
+        payment : '',
       },
       options: [{
-          value: '已缴费',
+          value: '0',
           label: '已缴费'
         }, {
-          value: '未缴费',
+          value: '1',
           label: '未缴费'     
         }],
-        value: '',
+      options1: [{
+        value: '0',
+        label: '男'
+      }, {
+        value: '1',
+        label: '女'     
+      }],
+        payment: '0',
+        sex:'0',
       formrules:{
-        // date:[{required:true,message:"日期不能为空",trigger:"blur"}],
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
+        province:[{required:true,message:"省份不能为空",trigger:"blur"}],
+        num:[{required:true,message:"考生号不能为空",trigger:"blur"}],
+        message:[{required:true,message:"身份证号不能为空",trigger:"blur"}],
+        xueyuan:[{required:true,message:"二级学院不能为空",trigger:"blur"}],
+        zy:[{required:true,message:"录取专业不能为空",trigger:"blur"}],
+        address:[{required:true,message:"邮寄地址不能为空",trigger:"blur"}],
+        code:[{required:true,message:"邮政编码不能为空",trigger:"blur"}],
+        phone:[{required:true,message:"联系电话不能为空",trigger:"blur"}],
+        receive:[{required:true,message:"收件人不能为空",trigger:"blur"}],
+        result:[{required:true,message:"投档成绩不能为空",trigger:"blur"}],
       }
     }
   },
@@ -114,8 +139,7 @@ export default {
         var fd = new FormData()
         fd.append("name",this.formDate.name)
         fd.append("province",this.formDate.province)
-        fd.append("num",this.formDate.num)
-        fd.append("sex",this.formDate.sex)
+        fd.append("num",this.formDate.num)      
         fd.append("message",this.formDate.message)
         fd.append("xueyuan",this.formDate.xueyuan)
         fd.append("dorm",this.formDate.dorm)
@@ -125,22 +149,52 @@ export default {
         fd.append("phone",this.formDate.phone)
         fd.append("receive",this.formDate.receive)
         fd.append("result",this.formDate.result)
-        fd.append("payment",this.value)
+        if(this.sex==0){
+          this.sex = '男'
+          fd.append("sex",this.sex)
+        }else{
+          this.sex = '女'
+          fd.append("sex",this.sex)
+        }
+        if(this.payment==0){
+          this.payment = '已缴费'
+          fd.append("payment",this.payment)
+        }else{
+          this.payment = '未缴费'
+          fd.append("payment",this.payment)
+        }
 
         this.$refs[formdong].validate((valid) => {
-        if (valid) {
-          axios.post(`http://localhost:8081/yxxtcs/student.php`,fd).then(this.creatRefresh)
-          this.$message({
-            type: 'success',
-            message: '新建成功!'
-          }); 
-          this.dialogAdd.show = false;
-          this.$emit('update');
-        }else {
-            console.log('error submit!!');
-            return false;
-          }
-      })
+          if (valid) {
+            axios.post(`http://localhost:8081/yxxtcs/student.php`,fd).then(this.creatRefresh)
+            this.$message({
+              type: 'success',
+              message: '新建成功!'
+            }); 
+            this.dialogAdd.show = false;
+            this.$emit('update');
+            this.empty()
+          }else {
+              console.log('error submit!!');
+              return false;
+            }
+        })
+    },
+    empty() {
+      this.formDate.name=''
+      this.formDate.province=''
+      this.formDate.num=''
+      this.sex=''
+      this.formDate.message=''
+      this.formDate.xueyuan=''
+      this.formDate.dorm=''
+      this.formDate.zy=''
+      this.formDate.address=''
+      this.formDate.code=''
+      this.formDate.phone=''
+      this.formDate.receive=''
+      this.formDate.result=''
+      this.payment=''
     },
   },
   mounted() {
