@@ -40,7 +40,7 @@
               <el-table-column label="录取专业" prop="zy" align="center" header-align="center" width="190%"></el-table-column>   
               <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="190%"></el-table-column> 
               <el-table-column label="缴费情况" prop="payment" align="center" width="120%"></el-table-column>
-              <el-table-column label="录入时间" prop="date" align="center" width="170%"></el-table-column> 
+              <el-table-column label="录入时间" prop="data" align="center" width="170%"></el-table-column> 
               <el-table-column label="操作" align="center" width="250%">
               <template slot-scope="scope">
                 <el-button
