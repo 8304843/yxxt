@@ -2,9 +2,10 @@
   <div class="login">
     <div class="middle-wrapper">
       <div class="title-wrapper">
-        <div class="title">VUE-ADMIN 后台管理系统</div>
+        <div class="title" style="color:black">登录界面</div>
       </div>
       <div class="login-form">
+       <div align="center" >  <img src="../../assets/img/login-logo.png"> </div>
         <el-form
           ref="loginForm"
           :model="form"
@@ -147,7 +148,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgb(32, 160, 255);
+    background-color: rgba(122, 129, 129, 0.151);
 
     .middle-wrapper {
       position: fixed;
