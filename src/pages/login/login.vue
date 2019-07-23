@@ -25,7 +25,7 @@
           <el-form-item prop="yanzhengma">
             <div class="check-code-wrapper">
               <div class="yanzhengma-wrapper">
-                <el-input v-model="form.yanzhengma" @keyup.enter.native="login('loginForm')" placeholder="请输入验证码">
+                <el-input v-model="form.yanzhengma" @keyup.enter.native="loginHandle('loginForm')" placeholder="请输入验证码">
                   <i slot="prefix" class="el-input__icon el-icon-adm-vertification" style="font-size: 18px;"></i>
                 </el-input>
               </div>
@@ -124,16 +124,19 @@
           // localStorage.setItem('ms_username',this.form.username);
           // localStorage.setItem('ms_department',res.data.department);
           if(res.data.status == "success"){
-            this.$router.push('/home');
+             axios.post(`api/ac/public/api/v1.0/token/get?userName=superadmin&password=6077bb478eacfdd3b1bc925147d2154b`).then((response)=> {
+              console.log(response.data.data.accessToken)
+              let token = response.data.data.accessToken;
+              this.$store.commit('SET_TOKEN', token);  
+              this.$router.push('/home');            
+            })   
+            
           }else{
             alert("账号或者密码错误！")
+            this.form.yanzhengma = ''
             this.form.password = ''
           }              
         })
-        let token = 'a94756da-2962-40ae-bdea-787fd02c9d92';
-
-        this.$store.commit('SET_TOKEN', token);
-        // this.$router.push('/home');
       }
     },
     components: {

@@ -41,6 +41,7 @@ Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
+// Vue.prototype.baseURL = process.env.API_ROOT; //配置全局变量判断当前处于开发环境or生产环境
 
 // 将axios挂载到prototype上，在组件中可以直接使用this.axios访问
 Vue.prototype.axios = http;

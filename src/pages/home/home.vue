@@ -36,11 +36,11 @@
                 </template>
               </el-table-column>
               <el-table-column label="考生号" prop="num" align="center" width="190%" header-align="center"></el-table-column>
-              <el-table-column label="二级学院" prop="xueyuan" align="center" header-align="center" width="190%"></el-table-column>  
+              <el-table-column label="二级学院" prop="xueyuan" align="center" header-align="center" width="170%"></el-table-column>  
               <el-table-column label="录取专业" prop="zy" align="center" header-align="center" width="190%"></el-table-column>   
-              <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="190%"></el-table-column> 
+              <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="180%"></el-table-column> 
               <el-table-column label="缴费情况" prop="payment" align="center" width="120%"></el-table-column>
-              <el-table-column label="录入时间" prop="data" align="center" width="170%"></el-table-column> 
+              <el-table-column label="录入时间" prop="date" align="center" width="170%"></el-table-column> 
               <el-table-column label="操作" align="center" width="250%">
               <template slot-scope="scope">
                 <el-button
@@ -144,22 +144,32 @@
           receive :'',//收件人
           result : '',//投档成绩
           payment:'',//缴费情况
-          data:'',
+          date:'',
         },
       }
     },
     created () {
       this.Mes_Show();
+      this.show();
+      let token = localStorage.My_token
+      console.log(token)
     },
     methods: {
       Mes_Show (scope) {
         axios.post(`http://localhost:8081/yxxtcs/Mes_Show.php`).then((res)=> {
+          console.log(res)
           this.tableData = res.data.data
           this.total = res.data.data.length-1;
           this.loading = false;  
           const data = res.data.data;
 					this.allTableData = data;
-          this.setPaginations()                
+          this.setPaginations()
+        }) 
+      },
+      show(){
+        let token = localStorage.My_token
+        axios.post(`api/user/public/api/v1.0/list?token=${token}`).then((res)=> {
+          console.log(res.data)
         }) 
       },
       setPaginations(){
@@ -235,9 +245,9 @@
             if(user.zy.includes(keyUser)) {//按录取专业查找
                 return user
             }
-            // if(user.data.includes(keyUser)) {//按录入时间查找
-            //     return user
-            // }
+            if(user.date.includes(keyUser)) {//按录入时间查找
+                return user
+            }
             if(user.sex.includes(keyUser)) {//按性别查找
                 return user
             }
