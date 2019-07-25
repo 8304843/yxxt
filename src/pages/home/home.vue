@@ -151,13 +151,11 @@
     created () {
       this.Mes_Show();
       this.show();
-      let token = localStorage.My_token
-      console.log(token)
     },
     methods: {
       Mes_Show (scope) {
         axios.post(`http://localhost:8081/yxxtcs/Mes_Show.php`).then((res)=> {
-          console.log(res)
+          // console.log(res)
           this.tableData = res.data.data
           this.total = res.data.data.length-1;
           this.loading = false;  
@@ -167,9 +165,10 @@
         }) 
       },
       show(){
-        let token = localStorage.My_token
-        axios.post(`api/user/public/api/v1.0/list?token=${token}`).then((res)=> {
-          console.log(res.data)
+        let token =localStorage.getItem('my_token')
+        console.log(token)
+        axios.post(`/api/user/public/api/v1.0/list?token=${token}`).then((res)=> {
+          // console.log(res.data)
         }) 
       },
       setPaginations(){

@@ -127,10 +127,10 @@
              axios.post(`api/ac/public/api/v1.0/token/get?userName=superadmin&password=6077bb478eacfdd3b1bc925147d2154b`).then((response)=> {
               console.log(response.data.data.accessToken)
               let token = response.data.data.accessToken;
-              this.$store.commit('SET_TOKEN', token);  
-              this.$router.push('/home');            
-            })   
-            
+              localStorage.setItem('my_token',token);
+              this.$store.commit('SET_TOKEN',token);
+              this.$router.replace('home');
+            })             
           }else{
             alert("账号或者密码错误！")
             this.form.yanzhengma = ''

@@ -40,7 +40,7 @@ export const otherRouter = {
   component: Layout,
   children: [
     {
-      path: 'home',
+      path: '/home',
       name: 'home',
       title: '首页',
       component: () => import('src/pages/home/home')
