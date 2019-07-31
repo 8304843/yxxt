@@ -11,6 +11,8 @@ import axios from 'axios';
 import 'normalize.css';
 import 'animate.css';
 
+import Print from 'vue-print-nb';
+
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
@@ -35,6 +37,7 @@ import 'src/assets/styles/common.scss';
 import 'src/assets/styles/iconfont.css';
 
 Vue.use(ElementUI);
+Vue.use(Print); 
 
 Vue.component('chart', ECharts);
 Vue.prototype.$axios = axios;

@@ -42,6 +42,7 @@
               <template slot-scope="scope">
                 <el-button
                   size="mini"
+                   @click="print(scope.$index, scope.row)"
                  >打印</el-button>
                 <el-button
                   size="mini"
@@ -263,6 +264,31 @@
                 return user
             }
         })
+    },
+    print(index,row) {
+      // alert(row.province);
+      let routeData = this.$router.resolve({
+        path: '/printTable',
+        query:{
+          province:row.province,
+          num:row.num,
+          id:row.id,
+          name:row.name,
+          sex:row.sex,
+          message:row.message,
+          xueyuan:row.xueyuan,
+          dorm:row.dorm,
+          zy : row.zy,
+          address :row.address,
+          code :row.code,
+          phone :row.phone,
+          receive :row.receive,
+          result : row.result,
+          payment: row.payment
+
+        }
+      });
+      window.open(routeData.href, '_blank');
     },
       //选择文件时触发
     onchangeFunc(file,fileList){

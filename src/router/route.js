@@ -18,6 +18,14 @@ export const loginRouter = {
   component: () => import('src/pages/login/login')
 };
 
+export const tableRouter = {
+  path: '/printTable',
+  name: 'printTable',
+  meta: { title: '打印表格' },
+  component: resolve => require(['../pages/printTable/printTable.vue'], resolve),
+  
+};
+
 // 错误页面
 export const errorRouter = {
   path: '/error/:code',
@@ -136,5 +144,6 @@ export const routers = [
   loginRouter,
   errorRouter,
   otherRouter,
-  ...appRouter
+  ...appRouter,
+  tableRouter
 ];
