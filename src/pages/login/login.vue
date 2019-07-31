@@ -151,7 +151,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgba(122, 129, 129, 0.151);
+    background-color: rgb(13, 200, 224);
 
     .middle-wrapper {
       position: fixed;

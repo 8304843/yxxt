@@ -30,10 +30,7 @@
                 width="60">
               </el-table-column>
               <el-table-column  label="姓名" prop="name" align="center" width="120%"></el-table-column>
-              <el-table-column label="头像" align="center" width="120" height="200">
-                <template slot-scope="scope">
-                  <img :src="scope.row.avatar" alt="用户头像" width="42" height="42" style="border-radius: 50%;">
-                </template>
+              <el-table-column label="头像" prop="state" align="center" width="120" height="200">              
               </el-table-column>
               <el-table-column label="考生号" prop="num" align="center" width="190%" header-align="center"></el-table-column>
               <el-table-column label="二级学院" prop="xueyuan" align="center" header-align="center" width="170%"></el-table-column>  
@@ -51,7 +48,7 @@
                   @click="handleEdit(scope.$index, scope.row)"
                   >编辑</el-button>
                 <el-button
-                  size="mini"
+                  size="mini" 
                   type="danger"
                   @click="handleDelete(scope.$index, scope.row)">删除</el-button>
               </template>
@@ -73,6 +70,7 @@
     </el-row>
     <AddUser :dialogAdd="dialogAdd" @update="Mes_Show"></AddUser>
     <EditUser :dialogEdit="dialogEdit" :form="form" @updateEdit="Mes_Show"></EditUser>
+     <router-view v-if="isRouterAlive"></router-view>
     <el-dialog title="人员导入" :visible.sync="dialogFormUpload" :modal-append-to-body='false' width="25%">
         <el-upload
           :on-success="success"
@@ -104,8 +102,14 @@
   const NEGATIVE = 1;
   export default {
     name : 'basic',
+    provide() {
+        return {
+            reload: this.reload
+        }
+    },
     data () {
       return {
+        isRouterAlive: true,
         dialogFormUpload:false,
         target:`http://localhost:8081/yxxtcs/people_upload.php`,
         tableData: [],
@@ -126,7 +130,8 @@
 					page_size:10, //一页显示多少
 					page_sizes:[5,10,15,20], //每页显示多少条
 					layout:'total, sizes, prev, pager, next, jumper'
-				},
+        },
+        imageUrl: '',
 				allTableData:[],
         form:{   //编辑信息
           id:'',
@@ -144,7 +149,8 @@
           receive :'',//收件人
           result : '',//投档成绩
           payment:'',//缴费情况
-          date:'',
+          date:'',//录入时间
+          photo: '',//照片
         },
       }
     },
@@ -155,20 +161,26 @@
     methods: {
       Mes_Show (scope) {
         axios.post(`http://localhost:8081/yxxtcs/Mes_Show.php`).then((res)=> {
-          // console.log(res)
+          console.log(res.data.data)
           this.tableData = res.data.data
           this.total = res.data.data.length-1;
           this.loading = false;  
           const data = res.data.data;
-					this.allTableData = data;
+          this.allTableData = data;
           this.setPaginations()
         }) 
+      },
+      reload () {
+          this.isRouterAlive = false;
+          this.$nextTick(function() {
+              this.isRouterAlive = true;
+          })
       },
       show(){
         let token =localStorage.getItem('my_token')
         console.log(token)
         axios.post(`/api/user/public/api/v1.0/list?token=${token}`).then((res)=> {
-          // console.log(res.data)
+          console.log(res.data)
         }) 
       },
       setPaginations(){
@@ -198,9 +210,9 @@
           phone :row.phone,
           receive :row.receive,
           result : row.result,
-          payment: row.payment
+          payment: row.payment,
+          photo: row.photo
         }
-        this.Mes_Show();
       },
       hanldeAdd(){  //添加
         this.dialogAdd.show = true;
@@ -266,6 +278,8 @@
       this.dialogFormUpload = false
       if(this.$refs.upload.uploadFiles){
         this.$refs.upload.submit() // 上传
+        //获取本地数据库数据，添加到接口
+        this.Mes_Show();
       } else {
         this.$message({
           type: 'warning',
@@ -309,12 +323,12 @@
 					}
 					this.tableData = tablist
 				}
+      },
+      addRowClass ({row, rowIndex}) {
+      if (row.rateType === NEGATIVE) {
+        return 'warning-row';
+      }
     },
-    addRowClass ({row, rowIndex}) {
-    if (row.rateType === NEGATIVE) {
-      return 'warning-row';
-    }
-  }
 },
   
   components: {

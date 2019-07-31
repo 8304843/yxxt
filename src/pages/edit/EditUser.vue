@@ -2,12 +2,28 @@
   <div class="hello">
     <el-dialog title="编辑学生信息" :modal-append-to-body='false' :visible.sync="dialogEdit.show">
       <el-form :model="form" ref="formEdit" label-width="100px" :rules="formrules">
+        <el-form-item label="头像" prop="photo">
+         <template slot-scope="scope">
+            <el-upload
+              class="avatar-uploader"
+              action="http://localhost:8081/yxxtcs/Pic_Upload.php"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="imageUrl" :src="imageUrl" class="avatar">             
+              <!-- <el-button size="small" type="primary">点击上传</el-button> -->
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <!-- <i v-else>上传预览</i> -->
+            </el-upload>   
+            <img :src="'http://localhost:8081/yxxtcs/upload/'+form.photo" style="position:absolute ;top:1px;left:200px;" class="avatar"> 
+          </template>
+        </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="省份" prop="province">
           <el-input v-model="form.province"></el-input>
-        </el-form-item>
+        </el-form-item> 
         <el-form-item label="考生号" prop="num">
           <el-input v-model="form.num"></el-input>
         </el-form-item>
@@ -53,17 +69,18 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogEdit.show = false">取 消</el-button>
+        <el-button @click="dialogFormClose('formEdit')">取 消</el-button>
         <el-button type="primary" @click="dialogFormEdit('formEdit')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
-</template>
+</template> 
  
 <script>
 import axios from "axios";
 
 export default {
+  inject:['reload'],
   name: 'HelloWorld',
   props:{
     dialogEdit:Object,
@@ -79,6 +96,9 @@ export default {
           label: '未缴费'     
         }],
         value: '',
+        flag:'null',//用以判断是否点击上传图片
+        photo_url:'',
+        imageUrl: ``,
       formrules:{
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
         province:[{required:true,message:"省份不能为空",trigger:"blur"}],
@@ -95,9 +115,13 @@ export default {
       }
     }
   },
+  created () {
+
+  },
   methods:{
-    dialogFormEdit(formEdit) {
+    dialogFormEdit(formEdit) {  
       var fd = new FormData()
+      fd.append("flag",'Edit')
       fd.append("name",this.form.name)
       fd.append("id",this.form.id)
       fd.append("province",this.form.province)
@@ -120,15 +144,65 @@ export default {
                     type:"success",
                     message:"编辑信息成功"
                 })
-              console.log(res)
+                if(localStorage.getItem('photo_base64')==null){
+                  // console.log('不更新照片')
+                }else{
+                  // console.log('更新照片')
+                  fd.append('file', localStorage.getItem('photo_base64'))
+                  axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
+                    console.log(res.data)
+                  })
+                }
+                this.imageUrl = '';
+                console.log(res)
                 this.dialogEdit.show = false;
                 this.$emit('updateEdit')
+                localStorage.removeItem('photo_base64')
             })
           } else {
             console.log('error submit!!');
             return false;
           }
         })
+    },
+    dialogFormClose(formEdit){
+      this.dialogEdit.show = false;
+      this.imageUrl = '';
+    },
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      //上传前对图片类型和大小进行判断
+      const isJPG = file.type === 'image/jpeg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      //校验成功上传文件
+      if(isJPG && isLt2M == true){
+        console.log(file);
+        // post上传图片
+        new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (e) => {
+            // 读取到的图片base64 数据编码 将此编码字符串传给后台即可
+            var imgcode = e.target.result; 
+            localStorage.setItem('photo_base64',imgcode)
+          }
+        })  
+        this.$message({
+          type:"success",
+          message:"上传成功，请按确定以保存！"
+        })  
+      }
+      // this.$emit('updateEdit')
+      this.reload()
+      return isJPG && isLt2M;
     }
   }
 }
@@ -136,5 +210,27 @@ export default {
  
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-   
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 108px;
+    height: 108px;
+    line-height: 108px;
+    text-align: center;
+  }
+  .avatar {
+    width: 108px;
+    height: 108px;
+    display: block;
+  }
 </style>
