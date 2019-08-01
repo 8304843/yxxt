@@ -157,6 +157,7 @@ export default {
                 console.log(res)
                 this.dialogEdit.show = false;
                 this.$emit('updateEdit')
+                this.$emit('updateEdit')
                 localStorage.removeItem('photo_base64')
             })
           } else {

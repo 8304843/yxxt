@@ -162,7 +162,7 @@
     methods: {
       Mes_Show (scope) {
         axios.post(`http://localhost:8081/yxxtcs/Mes_Show.php`).then((res)=> {
-          console.log(res.data.data)
+          // console.log(res.data.data)
           this.tableData = res.data.data
           this.total = res.data.data.length-1;
           this.loading = false;  
@@ -180,7 +180,7 @@
       show(){
         let token =localStorage.getItem('my_token')
         console.log(token)
-        axios.post(`/api/user/public/api/v1.0/list?token=${token}`).then((res)=> {
+        axios.post(`/api/user/public/api/v1.0/list?token=${token}`).then((res)=> {//调用接口获取人员列表
           console.log(res.data)
         }) 
       },

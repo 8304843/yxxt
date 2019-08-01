@@ -174,32 +174,32 @@ export default {
         }
         var picture_url = localStorage.getItem('photo_base64')
         let token =localStorage.getItem('my_token')
-        // picture_url = picture_url.replace(/^data:image\/\w+;base64,/, "")
-        if(picture_url==null){
-          console.log('不调用接口')
-        }else{
-          console.log('调用接口上传人员信息')
-          if(localStorage.getItem('photo_base64')==null){
-            // console.log('不更新照片')
-            fd.append("state",'未上传')
-          }else{
-            // console.log('更新照片')
-            fd.append("state",'已上传')
-            fd.append('file', localStorage.getItem('photo_base64'))
-            axios.post(`http://localhost:8081/yxxtcs/Pic_Upload_Add.php`,fd).then(res => {
-              console.log(res.data)
-            })
-          }
-          this.dialogInterface(picture_url,token)
-        }       
+        // picture_url = picture_url.replace(/^data:image\/\w+;base64,/, "")  
         this.$refs[formdong].validate((valid) => {
           if (valid) {
-            // axios.post(`http://localhost:8081/yxxtcs/student.php`,fd).then(this.creatRefresh)
+            if(picture_url==null){
+              console.log('不调用接口')
+              fd.append("state",'未上传')
+              fd.append('file', picture_url)
+              axios.post(`http://localhost:8081/yxxtcs/Pic_Upload_Add.php`,fd).then(res => {
+                console.log(res)
+              })
+            }else{
+              console.log('调用接口上传人员信息')
+              // console.log('更新照片')
+              fd.append("state",'已上传')
+              fd.append('file', picture_url)
+              axios.post(`http://localhost:8081/yxxtcs/Pic_Upload_Add.php`,fd).then(res => {
+                console.log(res.data)
+              })
+              this.dialogInterface(picture_url,token)//调用接口上传
+            }
             this.$message({
               type: 'success',
               message: '新建成功!'
             }); 
             this.dialogAdd.show = false;           
+            this.$emit('update');
             this.$emit('update');
             this.empty()
           }else {
@@ -237,7 +237,7 @@ export default {
         }); 
     },
     dialogFormClose(formEdit){
-      this.dialogEdit.show = false;
+      this.dialogAdd.show = false;
       this.imageUrl = '';
     },
     handleAvatarSuccess(res, file) {
@@ -277,7 +277,6 @@ export default {
       this.formDate.name=''
       this.formDate.province=''
       this.formDate.num=''
-      this.sex=''
       this.formDate.message=''
       this.formDate.xueyuan=''
       this.formDate.dorm=''
@@ -287,7 +286,6 @@ export default {
       this.formDate.phone=''
       this.formDate.receive=''
       this.formDate.result=''
-      this.payment=''
       this.imageUrl = '';
     },
   },
