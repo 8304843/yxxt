@@ -73,36 +73,40 @@ export default {
   name: "printTable",
   data () {
     return {
-      systemDate:""
+      systemDate:"",
+      timer:""
     }
   },
   mounted () {
     // 获取缓存数据
     // this.province =this.$route.params.province
-    window.print(); 
+    // window.print();
+   
   },
   methods:{
     getTime(){
-				// setInterval(()=>{
-				// 	//new Date() new一个data对象，当前日期和时间
-				// 	//toLocaleString() 方法可根据本地时间把 Date 对象转换为字符串，并返回结果。
-				// 	this.nowtime = new Date().toLocaleString();
-        // },1000)
-         let nowDate = new Date();
-         let date = {
-                        year: nowDate.getFullYear(),
-                        month: nowDate.getMonth() + 1,
-                        date: nowDate.getDate(),
-                    }
-                    this.systemDate = date.year + '-' + 0 + date.month + '-' + date.date;
-                    
-                    
-			}
-    
+			// setInterval(()=>{
+			// 	//new Date() new一个data对象，当前日期和时间
+			// 	//toLocaleString() 方法可根据本地时间把 Date 对象转换为字符串，并返回结果。
+			// 	this.nowtime = new Date().toLocaleString();
+      // },1000)
+      let nowDate = new Date();
+      let date = {
+        year: nowDate.getFullYear(),
+        month: nowDate.getMonth() + 1,
+        date: nowDate.getDate(),
+      }
+      this.systemDate = date.year + '-' + 0 + date.month + '-' + date.date;         
+		}
   },
   created(){
-			this.getTime();
-		}
+    this.getTime();
+    clearTimeout(this.timer);  //清除延迟执行 
+    this.timer = setTimeout(()=>{   //设置延迟执行
+      console.log('ok');
+      window.print();
+    },100)
+	}
 };
 </script>
 

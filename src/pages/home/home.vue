@@ -30,6 +30,7 @@
                 width="60">
               </el-table-column>
               <el-table-column  label="姓名" prop="name" align="center" width="120%"></el-table-column>
+              <el-table-column  label="suerid" prop="userId" align="center" v-if="hideRow"></el-table-column>
               <el-table-column label="头像" prop="state" align="center" width="120" height="200">              
               </el-table-column>
               <el-table-column label="考生号" prop="num" align="center" width="190%" header-align="center"></el-table-column>
@@ -110,10 +111,13 @@
     },
     data () {
       return {
+        token :localStorage.getItem('my_token'),
         isRouterAlive: true,
         dialogFormUpload:false,
         target:`http://localhost:8081/yxxtcs/people_upload.php`,
         tableData: [],
+        list: [],
+        hideRow : false,
         loading: true,
         pagesize: 10,
         currentpage: 1,
@@ -156,6 +160,9 @@
       }
     },
     created () {
+      
+    },
+    mounted() {
       this.Mes_Show();
       this.show();
     },
@@ -179,7 +186,6 @@
       },
       show(){
         let token =localStorage.getItem('my_token')
-        console.log(token)
         axios.post(`/api/user/public/api/v1.0/list?token=${token}`).then((res)=> {//调用接口获取人员列表
           console.log(res.data)
         }) 
@@ -219,6 +225,7 @@
         this.dialogAdd.show = true;
       },
       handleDelete(index, row) {//删除
+      var userId = row.userId
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -231,6 +238,7 @@
                 type:"success",
                 message:"删除信息成功"
             })
+            this.handleDeleteInterface(userId)
             this.Mes_Show()    //删除数据，更新视图
         })
         }).catch(() => {
@@ -239,6 +247,21 @@
             message: '已取消删除'
           });          
         });
+      },
+      handleDeleteInterface(userId){//调用删除人员接口
+        this.list = []
+        var fd = new Array()
+        var fd = [
+          {
+            userId:userId, //人员编号 
+          }
+          ]
+        this.list = fd
+        this.$axios.post(`api/user/public/api/v1.0/delete?token=${this.token}`,{
+           userList:this.list
+        }).then(res =>{
+          
+        })
       },
        searchUserinfo(keyUser) {
         return this.tableData.filter((user) => {

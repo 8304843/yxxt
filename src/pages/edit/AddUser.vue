@@ -95,6 +95,7 @@ export default {
       restaurants: [],
       list:[],
       imageUrl:'',
+      userId:'0',
       formDate:{
         name:'',//姓名
         province:'',//省份
@@ -189,16 +190,23 @@ export default {
               // console.log('更新照片')
               fd.append("state",'已上传')
               fd.append('file', picture_url)
+              var workCode = this.formDate.num
+              var name = this.formDate.name
               axios.post(`http://localhost:8081/yxxtcs/Pic_Upload_Add.php`,fd).then(res => {
                 console.log(res.data)
+                this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
               })
-              this.dialogInterface(picture_url,token)//调用接口上传
+              
             }
             this.$message({
               type: 'success',
               message: '新建成功!'
             }); 
             this.dialogAdd.show = false;           
+            this.$emit('update');
+            this.$emit('update');
+            this.$emit('update');
+            this.$emit('update');
             this.$emit('update');
             this.$emit('update');
             this.empty()
@@ -209,15 +217,15 @@ export default {
         })
         localStorage.removeItem('photo_base64')
     },
-    dialogInterface(picture_url,token){//调用接口
+    dialogAddInterface(picture_url,token,workCode,name){//调用添加人员接口
       picture_url = picture_url.replace(/^data:image\/\w+;base64,/, "")
       this.list = []
       var fd = new Array()
       var fd = [
           {
             id:"55", //人员编号 
-            name:this.formDate.name,//人员姓名
-            workCode:this.formDate.num, //人员工号 系统全局唯一编号，不能重复 
+            name:name,//人员姓名
+            workCode:workCode, //人员工号 系统全局唯一编号，不能重复 
             orgCode:"1000", //机构编码 
             deptCode:"1000", //部门编码 
             gender:this.sex, //性别 1：男 0：女 
@@ -230,7 +238,19 @@ export default {
         this.list = fd
         axios.post(`api/user/public/api/v1.0/add?token=${token}`,{
           userList:this.list
-        }).then(this.creatRefresh)
+        }).then(res=>{
+          this.userId = res.data.data[0].userId
+          var userId = this.userId
+          this.test(userId,workCode)
+        })
+        
+        //将userId更新到刚刚新增的人员信息上
+        // axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,{
+        //     userId:this.userId,
+        //     num : workCode
+        //   }).then(res=>{
+        //     console.log(res)
+        //   })
         this.$message({
           type: 'success',
           message: '新建成功!'
@@ -239,6 +259,14 @@ export default {
     dialogFormClose(formEdit){
       this.dialogAdd.show = false;
       this.imageUrl = '';
+    },
+    test(userId,workCode){
+      var fd  = new FormData()
+        fd.append("userId",userId)
+        fd.append("num",workCode)
+      axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,fd).then(res=>{
+            console.log(res)
+          })
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
