@@ -182,12 +182,16 @@ export default {
                 this.imageUrl = '';
                 console.log(res)
                 this.dialogEdit.show = false;
-                this.$emit('updateEdit')
-                this.$emit('updateEdit')
-                this.$emit('updateEdit')
-                this.$emit('updateEdit')
-                this.$emit('updateEdit')
-                this.$emit('updateEdit')
+                clearTimeout(this.timer);  //清除延迟执行 
+                this.timer = setInterval(()=>{   //设置延迟执行
+                //console.log('ok');
+                this.$emit('updateEdit');
+                },100)
+                // this.$emit('updateEdit')
+                // this.$emit('updateEdit')
+                // this.$emit('updateEdit')
+                // this.$emit('updateEdit')
+                // this.$emit('updateEdit')
                 localStorage.removeItem('photo_base64')
             })
           } else {

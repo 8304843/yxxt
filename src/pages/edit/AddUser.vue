@@ -204,12 +204,16 @@ export default {
               message: '新建成功!'
             }); 
             this.dialogAdd.show = false;           
-            this.$emit('update');
-            this.$emit('update');
-            this.$emit('update');
-            this.$emit('update');
-            this.$emit('update');
-            this.$emit('update');
+            clearTimeout(this.timer);  //清除延迟执行 
+            this.timer = setInterval(()=>{   //设置延迟执行
+              // console.log('ok');
+                 this.$emit('update');
+                   },100)
+            // this.$emit('update');
+            // this.$emit('update');
+            // this.$emit('update');
+            // this.$emit('update');
+            // this.$emit('update');
             this.empty()
           }else {
             console.log('error submit!!');
