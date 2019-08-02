@@ -161,7 +161,8 @@ export default {
         fd.append("phone",this.formDate.phone)
         fd.append("receive",this.formDate.receive)
         fd.append("result",this.formDate.result)
-        if(this.sex==0){
+        fd.append("dorm",this.formDate.result)
+        if(this.sex==1){
           fd.append("sex",'男')
         }else{
           fd.append("sex",'女')

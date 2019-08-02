@@ -28,7 +28,14 @@
           <el-input v-model="form.num"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
-          <el-input v-model="form.sex"></el-input>
+        <el-select v-model="form.sex" style="width:100%;" placeholder="请选择">
+          <el-option
+            v-for="item in options1"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         </el-form-item>
         <el-form-item label="身份证号" prop="message">
           <el-input v-model="form.message"></el-input>
@@ -95,6 +102,13 @@ export default {
           value: '未缴费',
           label: '未缴费'     
         }],
+        options1: [{
+        value: '0',
+        label: '男'
+      }, {
+        value: '1',
+        label: '女'     
+      }],
         value: '',
         flag:'null',//用以判断是否点击上传图片
         photo_url:'',
@@ -126,7 +140,7 @@ export default {
       fd.append("id",this.form.id)
       fd.append("province",this.form.province)
       fd.append("num",this.form.num)
-      fd.append("sex",this.form.sex)
+      // fd.append("sex",this.form.sex)
       fd.append("message",this.form.message)
       fd.append("xueyuan",this.form.xueyuan)
       fd.append("dorm",this.form.dorm)
@@ -137,6 +151,13 @@ export default {
       fd.append("receive",this.form.receive)
       fd.append("result",this.form.result)
       fd.append("payment",this.form.payment)
+      if(this.sex==1){
+          fd.append("sex",'男')
+        }else{
+          fd.append("sex",'女')
+        }
+        var picture_url = localStorage.getItem('photo_base64')
+        let token =localStorage.getItem('my_token')
         this.$refs[formEdit].validate((valid) => {
           if (valid) {
             this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Change.php`,fd).then(res => {
@@ -148,10 +169,15 @@ export default {
                   // console.log('不更新照片')
                 }else{
                   // console.log('更新照片')
+                  console.log('调用上传人员接口信息')
                   fd.append('file', localStorage.getItem('photo_base64'))
                   axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
                     console.log(res.data)
                   })
+                  var workCode= this.form.num
+                  var name= this.form.name
+                  // console.log(this.form.name)
+                  this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
                 }
                 this.imageUrl = '';
                 console.log(res)
@@ -169,6 +195,46 @@ export default {
             return false;
           }
         })
+    },
+    dialogAddInterface(picture_url,token,workCode,name){//调用添加人员接口
+      picture_url = picture_url.replace(/^data:image\/\w+;base64,/, "")
+      this.list = []
+      var fd = new Array()
+      var fd = [
+          {
+            id:"55", //人员编号 
+            name:name,//人员姓名
+            workCode:workCode, //人员工号 系统全局唯一编号，不能重复 
+            orgCode:"1000", //机构编码 
+            deptCode:"1000", //部门编码 
+            gender:this.sex, //性别 1：男 0：女 
+            userType:"1", //人员类型 1：普通员工 2：VIP 3：黑名单 
+            picture:picture_url, //注册照片 
+            customerPicture:picture_url, //显示照片 
+            devIds:[""] //需要同步的设备列表 
+          }
+          ]
+        this.list = fd
+        axios.post(`api/user/public/api/v1.0/add?token=${token}`,{
+          userList:this.list
+        }).then(res=>{
+          this.userId = res.data.data[0].userId
+          var userId = this.userId
+          this.test(userId,workCode)
+        })
+        this.$message({
+          type: 'success',
+          message: '编辑成功!'
+        }); 
+    },
+    test(userId,workCode){
+      var fd =new FormData()
+      fd.append("userId",userId)
+      fd.append("num",workCode)
+      axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,fd).then(res=>{
+            console.log(res)
+          })
+
     },
     dialogFormClose(formEdit){
       this.dialogEdit.show = false;
