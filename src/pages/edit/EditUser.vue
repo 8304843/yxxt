@@ -161,38 +161,42 @@ export default {
         this.$refs[formEdit].validate((valid) => {
           if (valid) {
             this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Change.php`,fd).then(res => {
-                this.$message({
-                    type:"success",
-                    message:"编辑信息成功"
-                })
-                if(localStorage.getItem('photo_base64')==null){
-                  // console.log('不更新照片')
+                // this.$message({
+                //     type:"success",
+                //     message:"编辑信息成功"
+                // })
+                if(res.data.states=='已存在'){
+                  this.$message({
+                    type: 'error',
+                    message: '人员已存在，请检查考生号！'
+                  });
                 }else{
-                  // console.log('更新照片')
-                  console.log('调用上传人员接口信息')
-                  fd.append('file', localStorage.getItem('photo_base64'))
-                  axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
-                    console.log(res.data)
-                  })
-                  var workCode= this.form.num
-                  var name= this.form.name
-                  // console.log(this.form.name)
-                  this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
+                  if(localStorage.getItem('photo_base64')==null){
+                    // console.log('不更新照片')
+                  }else if(userId==''){
+                    // console.log('更新照片')
+                    //调用上传人员接口信息
+                    fd.append('file', localStorage.getItem('photo_base64'))
+                    axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
+                      // console.log(res.data)
+                    })
+                    var workCode= this.form.num
+                    var name= this.form.name
+                    // console.log(this.form.name)
+                    this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
+                  }else{
+                    //调用更新人员接口信息
+                  }
+                  this.imageUrl = '';
+                  console.log(res)
+                  this.dialogEdit.show = false;
+                  clearTimeout(this.timer);  //清除延迟执行 
+                  this.timer = setInterval(()=>{   //设置延迟执行
+                    //console.log('ok');
+                    this.$emit('updateEdit');
+                  },100)
+                  localStorage.removeItem('photo_base64')
                 }
-                this.imageUrl = '';
-                console.log(res)
-                this.dialogEdit.show = false;
-                clearTimeout(this.timer);  //清除延迟执行 
-                this.timer = setInterval(()=>{   //设置延迟执行
-                //console.log('ok');
-                this.$emit('updateEdit');
-                },100)
-                // this.$emit('updateEdit')
-                // this.$emit('updateEdit')
-                // this.$emit('updateEdit')
-                // this.$emit('updateEdit')
-                // this.$emit('updateEdit')
-                localStorage.removeItem('photo_base64')
             })
           } else {
             console.log('error submit!!');

@@ -180,41 +180,58 @@ export default {
         this.$refs[formdong].validate((valid) => {
           if (valid) {
             if(picture_url==null){
-              console.log('不调用接口')
+              // console.log('不调用接口')
               fd.append("state",'未上传')
               fd.append('file', picture_url)
               axios.post(`http://localhost:8081/yxxtcs/Pic_Upload_Add.php`,fd).then(res => {
-                console.log(res)
+                if(res.data.states=='已存在'){
+                  this.$message({
+                    type: 'error',
+                    message: '人员已存在，请检查考生号！'
+                  });
+                }else{
+                  this.$message({
+                    type: 'success',
+                    message: '新建成功!'
+                  }); 
+                  this.dialogAdd.show = false;           
+                  clearTimeout(this.timer);  //清除延迟执行 
+                  this.timer = setInterval(()=>{   //设置延迟执行
+                    // console.log('ok');
+                    this.$emit('update');
+                  },100)
+                  this.empty()
+                }
               })
             }else{
-              console.log('调用接口上传人员信息')
+              // console.log('调用接口上传人员信息')
               // console.log('更新照片')
               fd.append("state",'已上传')
               fd.append('file', picture_url)
               var workCode = this.formDate.num
               var name = this.formDate.name
               axios.post(`http://localhost:8081/yxxtcs/Pic_Upload_Add.php`,fd).then(res => {
-                console.log(res.data)
-                this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
+                if(res.data.states=='已存在'){
+                  this.$message({
+                    type: 'error',
+                    message: '人员已存在，请检查考生号！'
+                  });
+                }else{
+                  this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
+                  this.$message({
+                    type: 'success',
+                    message: '新建成功!'
+                  }); 
+                  this.dialogAdd.show = false;           
+                  clearTimeout(this.timer);  //清除延迟执行 
+                  this.timer = setInterval(()=>{   //设置延迟执行
+                    // console.log('ok');
+                    this.$emit('update');
+                  },100)
+                  this.empty()
+                }
               })
-              
             }
-            this.$message({
-              type: 'success',
-              message: '新建成功!'
-            }); 
-            this.dialogAdd.show = false;           
-            clearTimeout(this.timer);  //清除延迟执行 
-            this.timer = setInterval(()=>{   //设置延迟执行
-              // console.log('ok');
-                 this.$emit('update');
-                   },100)
-            // this.$emit('update');
-            // this.$emit('update');
-            // this.$emit('update');
-            // this.$emit('update');
-            // this.$emit('update');
-            this.empty()
           }else {
             console.log('error submit!!');
             return false;
@@ -246,16 +263,8 @@ export default {
         }).then(res=>{
           this.userId = res.data.data[0].userId
           var userId = this.userId
-          this.test(userId,workCode)
+          this.update_userId(userId,workCode)
         })
-        
-        //将userId更新到刚刚新增的人员信息上
-        // axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,{
-        //     userId:this.userId,
-        //     num : workCode
-        //   }).then(res=>{
-        //     console.log(res)
-        //   })
         this.$message({
           type: 'success',
           message: '新建成功!'
@@ -265,13 +274,13 @@ export default {
       this.dialogAdd.show = false;
       this.imageUrl = '';
     },
-    test(userId,workCode){
+    update_userId(userId,workCode){
       var fd  = new FormData()
-        fd.append("userId",userId)
-        fd.append("num",workCode)
+      fd.append("userId",userId)
+      fd.append("num",workCode)
       axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,fd).then(res=>{
-            console.log(res)
-          })
+        console.log(res)
+      })
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
