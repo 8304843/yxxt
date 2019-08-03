@@ -130,6 +130,7 @@ export default {
     }
   },
   created () {
+    // console.log(this.form.photo_Base64)
 
   },
   methods:{
@@ -158,6 +159,11 @@ export default {
         }
         var picture_url = localStorage.getItem('photo_base64')
         let token =localStorage.getItem('my_token')
+        var base64 =this.form.photo_Base64
+        var userId =this.form.userId
+        var workCode= this.form.num
+        var name= this.form.name
+        console.log(userId)
         this.$refs[formEdit].validate((valid) => {
           if (valid) {
             this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Change.php`,fd).then(res => {
@@ -171,24 +177,26 @@ export default {
                     message: '人员已存在，请检查考生号！'
                   });
                 }else{
-                  if(localStorage.getItem('photo_base64')==null){
-                    // console.log('不更新照片')
+                  if(base64==null){
+                    console.log('不更新照片')
                   }else if(userId==''){
-                    // console.log('更新照片')
+                    console.log('更新照片')
                     //调用上传人员接口信息
                     fd.append('file', localStorage.getItem('photo_base64'))
                     axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
                       // console.log(res.data)
                     })
-                    var workCode= this.form.num
-                    var name= this.form.name
+                    // var workCode= this.form.num
+                    // var name= this.form.name
                     // console.log(this.form.name)
                     this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
                   }else{
-                    //调用更新人员接口信息
+                    // console.log('调用')
+
+                   this.dialogUpdateInterface(base64,token,workCode,name,userId)//调用更新人员接口信息
                   }
                   this.imageUrl = '';
-                  console.log(res)
+                  // console.log(res)
                   this.dialogEdit.show = false;
                   clearTimeout(this.timer);  //清除延迟执行 
                   this.timer = setInterval(()=>{   //设置延迟执行
@@ -240,9 +248,34 @@ export default {
       fd.append("userId",userId)
       fd.append("num",workCode)
       axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,fd).then(res=>{
-            console.log(res)
+            // console.log(res)
           })
 
+    },
+    dialogUpdateInterface(Base64,token,workCode,name,userId){//调用更新人员接口
+      this.list = []
+      var fd = new Array()
+      var fd = [
+          {
+            userId:userId, //人员编号 
+            name:name,//人员姓名
+            workCode:workCode, //人员工号 系统全局唯一编号，不能重复   
+            gender:this.sex, //性别 1：男 0：女 
+            picture:Base64, //注册照片 
+            customerPicture:Base64, //显示照片 
+            devIds:[""] //需要同步的设备列表 
+          }
+          ]
+        this.list = fd
+        axios.post(`api/user/public/api/v1.0/update?token=${token}`,{
+          userList:this.list
+        }).then(res=>{
+          console.log(res)
+        })
+        this.$message({
+          type: 'success',
+          message: '编辑成功!'
+        }); 
     },
     dialogFormClose(formEdit){
       this.dialogEdit.show = false;
@@ -263,7 +296,7 @@ export default {
       }
       //校验成功上传文件
       if(isJPG && isLt2M == true){
-        console.log(file);
+        // console.log(file);
         // post上传图片
         new Promise(function (resolve, reject) {
           var reader = new FileReader();

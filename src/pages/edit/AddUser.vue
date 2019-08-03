@@ -161,7 +161,7 @@ export default {
         fd.append("phone",this.formDate.phone)
         fd.append("receive",this.formDate.receive)
         fd.append("result",this.formDate.result)
-        fd.append("dorm",this.formDate.result)
+        fd.append("dorm",this.formDate.dorm)
         if(this.sex==1){
           fd.append("sex",'男')
         }else{
@@ -207,7 +207,9 @@ export default {
               // console.log('调用接口上传人员信息')
               // console.log('更新照片')
               fd.append("state",'已上传')
+              var picture_Base64 = picture_url.replace(/^data:image\/\w+;base64,/, "")
               fd.append('file', picture_url)
+              fd.append('Base64', picture_Base64)
               var workCode = this.formDate.num
               var name = this.formDate.name
               axios.post(`http://localhost:8081/yxxtcs/Pic_Upload_Add.php`,fd).then(res => {

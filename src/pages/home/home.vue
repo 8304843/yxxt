@@ -31,6 +31,7 @@
               </el-table-column>
               <el-table-column  label="姓名" prop="name" align="center" width="120%"></el-table-column>
               <el-table-column  label="suerid" prop="userId" align="center" v-if="hideRow"></el-table-column>
+              <el-table-column  label="base64" prop="photo_Base64" align="center" v-if="hideRow"></el-table-column>
               <el-table-column label="头像" prop="state" align="center" width="120" height="200">              
               </el-table-column>
               <el-table-column label="考生号" prop="num" align="center" width="190%" header-align="center"></el-table-column>
@@ -160,11 +161,23 @@
       }
     },
     created () {
+      clearTimeout(this.timer);  //清除持续执行 
+    this.timer = setInterval(()=>{   //设置持续执行获取对比记录
+      //console.log('ok');
+      // this.showd();
+    },4000)
+	},
       
-    },
     mounted() {
       this.Mes_Show();
-      this.show();
+    //   this.show();
+    //   // this.showd();
+    //   clearTimeout(this.timer);  //清除持续执行 
+    // this.timer = setInterval(()=>{   //设置持续执行获取对比记录
+    //   //console.log('ok');
+    //   this.showd();
+    // },4000)
+
     },
     methods: {
       Mes_Show (scope) {
@@ -189,6 +202,23 @@
         axios.post(`/api/user/public/api/v1.0/list?token=${token}`).then((res)=> {//调用接口获取人员列表
           console.log(res.data)
         }) 
+      },
+      showd(){
+        let token =localStorage.getItem('my_token')
+        axios.post(`/api/record/public/api/v1.0/list?token=${token}&deviceId=33335WY433337HBY&type=1&startTime=12344 54356&endTime=12455667546`).then((res)=> {//调用接口获取人员列表
+          console.log(res.data)
+          // this.userId = res.data.data[0].userId
+          // var userId = this.userId
+          // this.test(userId)
+        }) 
+      },
+      test(userId){
+        var fd  = new FormData()
+        fd.append("userId",userId)
+      axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,fd).then(res=>{
+            console.log(res)
+          })
+
       },
       setPaginations(){
 				this.paginations.total = this.allTableData.length; //数据的数量
@@ -218,7 +248,9 @@
           receive :row.receive,
           result : row.result,
           payment: row.payment,
-          photo: row.photo
+          photo: row.photo,
+          photo_Base64:row.photo_Base64,
+          userId:row.userId
         }
       },
       hanldeAdd(){  //添加
