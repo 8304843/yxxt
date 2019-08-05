@@ -120,14 +120,14 @@ export default {
           label: '未缴费'     
         }],
       options1: [{
-        value: '0',
+        value: '1',
         label: '男'
       }, {
-        value: '1',
+        value: '0',
         label: '女'     
       }],
         payment: '0',
-        sex:'0',
+        sex:'1',
       formrules:{
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
         province:[{required:true,message:"省份不能为空",trigger:"blur"}],

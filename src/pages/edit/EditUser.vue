@@ -103,15 +103,16 @@ export default {
           label: '未缴费'     
         }],
         options1: [{
-        value: '0',
+        value: '男',
         label: '男'
       }, {
-        value: '1',
+        value: '女',
         label: '女'     
       }],
         value: '',
         flag:'null',//用以判断是否点击上传图片
         photo_url:'',
+        sex:'',
         imageUrl: ``,
       formrules:{
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
@@ -141,7 +142,7 @@ export default {
       fd.append("id",this.form.id)
       fd.append("province",this.form.province)
       fd.append("num",this.form.num)
-      // fd.append("sex",this.form.sex)
+      fd.append("sex",this.form.sex)
       fd.append("message",this.form.message)
       fd.append("xueyuan",this.form.xueyuan)
       fd.append("dorm",this.form.dorm)
@@ -152,10 +153,10 @@ export default {
       fd.append("receive",this.form.receive)
       fd.append("result",this.form.result)
       fd.append("payment",this.form.payment)
-      if(this.sex==1){
-          fd.append("sex",'男')
+        if(this.form.sex=='男'){
+          this.sex ='1'
         }else{
-          fd.append("sex",'女')
+          this.sex ='0'
         }
         var picture_url = localStorage.getItem('photo_base64')
         let token =localStorage.getItem('my_token')
@@ -163,14 +164,10 @@ export default {
         var userId =this.form.userId
         var workCode= this.form.num
         var name= this.form.name
-        console.log(userId)
+        var Sex = this.sex
         this.$refs[formEdit].validate((valid) => {
           if (valid) {
-            this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Change.php`,fd).then(res => {
-                // this.$message({
-                //     type:"success",
-                //     message:"编辑信息成功"
-                // })
+            this.$axios.post(`http://localhost:8081/yxxtcs/Mes_Change.php`,fd).then(res => {              
                 if(res.data.states=='已存在'){
                   this.$message({
                     type: 'error',
@@ -186,21 +183,19 @@ export default {
                     axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
                       // console.log(res.data)
                     })
-                    // var workCode= this.form.num
-                    // var name= this.form.name
-                    // console.log(this.form.name)
                     this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
                   }else{
                     // console.log('调用')
-
-                   this.dialogUpdateInterface(base64,token,workCode,name,userId)//调用更新人员接口信息
+                    this.dialogUpdateInterface(base64,token,Sex,name,userId)//调用更新人员接口信息
                   }
+                  this.$message({
+                    type:"success",
+                    message:"编辑信息成功"
+                  })
                   this.imageUrl = '';
-                  // console.log(res)
                   this.dialogEdit.show = false;
                   clearTimeout(this.timer);  //清除延迟执行 
                   this.timer = setInterval(()=>{   //设置延迟执行
-                    //console.log('ok');
                     this.$emit('updateEdit');
                   },100)
                   localStorage.removeItem('photo_base64')
@@ -252,15 +247,14 @@ export default {
           })
 
     },
-    dialogUpdateInterface(Base64,token,workCode,name,userId){//调用更新人员接口
+    dialogUpdateInterface(Base64,token,Sex,name,userId){//调用更新人员接口
       this.list = []
       var fd = new Array()
       var fd = [
           {
             userId:userId, //人员编号 
             name:name,//人员姓名
-            workCode:workCode, //人员工号 系统全局唯一编号，不能重复   
-            gender:this.sex, //性别 1：男 0：女 
+            gender:Sex, //性别 1：男 0：女 
             picture:Base64, //注册照片 
             customerPicture:Base64, //显示照片 
             devIds:[""] //需要同步的设备列表 
