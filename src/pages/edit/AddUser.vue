@@ -40,6 +40,9 @@
         <el-form-item label="身份证号" prop="message">
           <el-input v-model="formDate.message"></el-input>
         </el-form-item>
+        <el-form-item label="班级信息" prop="classmate">
+          <el-input v-model="formDate.classmate"></el-input>
+        </el-form-item>
         <el-form-item label="二级学院" prop="xueyuan">
           <el-input v-model="formDate.xueyuan"></el-input>
         </el-form-item>
@@ -50,6 +53,16 @@
         <el-select v-model="payment" style="width:100%;" placeholder="请选择">
           <el-option
             v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </el-form-item>
+        <el-form-item label="注册状态" prop="registe">
+        <el-select v-model="registe" style="width:100%;" placeholder="请选择">
+          <el-option
+            v-for="item in options2"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -111,6 +124,7 @@ export default {
         receive :'',//收件人
         result : '',//投档成绩
         payment : '',
+        classmate : '' 
       },
       options: [{
           value: '0',
@@ -126,8 +140,16 @@ export default {
         value: '0',
         label: '女'     
       }],
+      options2: [{
+          value: '0',
+          label: '已注册'
+        }, {
+          value: '1',
+          label: '未注册'     
+        }],
         payment: '0',
         sex:'1',
+        registe:'1',
       formrules:{
         name:[{required:true,message:"用户名不能为空",trigger:"blur"}],
         province:[{required:true,message:"省份不能为空",trigger:"blur"}],
@@ -140,6 +162,7 @@ export default {
         phone:[{required:true,message:"联系电话不能为空",trigger:"blur"}],
         receive:[{required:true,message:"收件人不能为空",trigger:"blur"}],
         result:[{required:true,message:"投档成绩不能为空",trigger:"blur"}],
+        classmate:[{required:true,message:"班级信息不能为空",trigger:"blur"}],
       }
     }
   },
@@ -162,6 +185,7 @@ export default {
         fd.append("receive",this.formDate.receive)
         fd.append("result",this.formDate.result)
         fd.append("dorm",this.formDate.dorm)
+        fd.append("classmate",this.formDate.classmate)
         if(this.sex==1){
           fd.append("sex",'男')
         }else{
@@ -173,6 +197,13 @@ export default {
         }else{
           this.payment = '未缴费'
           fd.append("payment",this.payment)
+        }
+        if(this.registe==0){
+          this.registe = '已注册'
+          fd.append("registe",this.registe)
+        }else{
+          this.registe = '未注册'
+          fd.append("registe",this.registe)
         }
         var picture_url = localStorage.getItem('photo_base64')
         let token =localStorage.getItem('my_token')
@@ -196,7 +227,7 @@ export default {
                   }); 
                   this.dialogAdd.show = false;           
                   clearTimeout(this.timer);  //清除延迟执行 
-                  this.timer = setInterval(()=>{   //设置延迟执行
+                  this.timer = setTimeout(()=>{   //设置延迟执行
                     // console.log('ok');
                     this.$emit('update');
                   },100)

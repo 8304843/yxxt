@@ -2,7 +2,7 @@
   <div class="main">
     <!-- <div class="table"> -->
      <table border="1" width="650" height="680" align="center" cellspacing="0">
-		<caption color:black><strong>电子科技大学中山学院2019年新生报道凭条</strong></caption>
+		<caption color:black style="padding-top: 11px;"><strong>电子科技大学中山学院2019年新生报道凭条</strong></caption>
 		<tr align="center">
 		<td bgcolor="#ededed">考生号</td>
 			<td colspan="2">{{this.$route.query.num}}</td>
@@ -17,7 +17,7 @@
 		</tr>
 		<tr align="center">
 			<td bgcolor="#ededed">所属班级</td>
-			<td colspan="7"></td>
+			<td colspan="7">{{this.$route.query.classmate}}</td>
 		</tr>
 		<tr align="center">
 			<td bgcolor="#ededed">身份验证及缴费情况确定</td>
@@ -45,14 +45,14 @@
 		</tr>
     <tr align="center">
 			<!-- <td bgcolor="#ededed">办理户口迁移(需迁移户口者)</td> -->
-			<td colspan="7">宿舍:入住<u style="top: -50px;">{{this.$route.query.dorm}}</u>栋<u>610</u>号宿舍<u>4</u>床</td>
+			<td colspan="7">宿舍:入住<u style="top: -50px;">{{this.$route.query.dorm}}</u>栋<u></u>号宿舍<u></u>床</td>
 		</tr>
 	</table>
       <hr style="border:1 dashed #987cb9" width="100%  padding-bottom:5px;" color=black SIZE=1>
       <p  align='center'><strong>新生住宿凭条</strong></p>
   <p class="div2">
     <b class="f3">
-        电子信息学院&nbsp;<u>{{this.$route.query.zy}}</u>专业&nbsp;<u>17电信B</u>班级<u>{{this.$route.query.name}}</u>同学入住&nbsp;<u>{{this.$route.query.dorm}}</u>栋<u>610</u>号宿舍<u>4</u>床。管理员凭条发放钥匙：新生入住后签《入住协议》。办理住宿卡（交寸照一张）。
+        电子信息学院&nbsp;<u>{{this.$route.query.zy}}</u>专业&nbsp;<u>{{this.$route.query.classmate}}</u>班级<u>{{this.$route.query.name}}</u>同学入住&nbsp;<u>{{this.$route.query.dorm}}</u>栋<u></u>号宿舍<u></u>床。管理员凭条发放钥匙：新生入住后签《入住协议》。办理住宿卡（交寸照一张）。
   </b>
 </p>
 <p class="div4">
@@ -64,7 +64,7 @@
 <p class="div5">
   <b>{{systemDate}}</b> 
 </p>
-    <!-- </div> -->
+    <!-- </caption> -->
   </div>
 </template>
 
@@ -78,32 +78,24 @@ export default {
     }
   },
   mounted () {
-    // 获取缓存数据
-    // this.province =this.$route.params.province
-    // window.print();
+    
    
   },
   methods:{
     getTime(){
-			// setInterval(()=>{
-			// 	//new Date() new一个data对象，当前日期和时间
-			// 	//toLocaleString() 方法可根据本地时间把 Date 对象转换为字符串，并返回结果。
-			// 	this.nowtime = new Date().toLocaleString();
-      // },1000)
       let nowDate = new Date();
       let date = {
         year: nowDate.getFullYear(),
         month: nowDate.getMonth() + 1,
         date: nowDate.getDate(),
       }
-      this.systemDate = date.year + '-' + 0 + date.month + '-' + date.date;         
+      this.systemDate = date.year + '-'  + date.month + '-' + date.date;         
 		}
   },
   created(){
     this.getTime();
     clearTimeout(this.timer);  //清除延迟执行 
     this.timer = setTimeout(()=>{   //设置延迟执行
-      console.log('ok');
       window.print();
     },100)
 	}

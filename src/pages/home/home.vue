@@ -20,7 +20,7 @@
             <el-table
               v-loading="loading"
               element-loading-text="加载数据中"
-              height="650"
+              height="700"
               :data="searchUserinfo(keyUser)"
               border>
               <el-table-column
@@ -29,18 +29,19 @@
                 align="center"
                 width="60">
               </el-table-column>
-              <el-table-column  label="姓名" prop="name" align="center" width="120%"></el-table-column>
+              <el-table-column  label="姓名" prop="name" align="center" width="100%"></el-table-column>
               <el-table-column  label="suerid" prop="userId" align="center" v-if="hideRow"></el-table-column>
               <el-table-column  label="base64" prop="photo_Base64" align="center" v-if="hideRow"></el-table-column>
-              <el-table-column label="头像" prop="state" align="center" width="120" height="200">              
-              </el-table-column>
+              <el-table-column label="头像" prop="state" align="center" width="80%" height="200"></el-table-column>
+              <el-table-column  label="班级信息" prop="classmate" align="center"  width="150%" ></el-table-column>
               <el-table-column label="考生号" prop="num" align="center" width="190%" header-align="center"></el-table-column>
               <el-table-column label="二级学院" prop="xueyuan" align="center" header-align="center" width="170%"></el-table-column>  
-              <el-table-column label="录取专业" prop="zy" align="center" header-align="center" width="190%"></el-table-column>   
-              <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="180%"></el-table-column> 
-              <el-table-column label="缴费情况" prop="payment" align="center" width="120%"></el-table-column>
-              <el-table-column label="录入时间" prop="date" align="center" width="170%"></el-table-column> 
-              <el-table-column label="操作" align="center" width="250%">
+              <el-table-column label="录取专业" prop="zy" align="center" header-align="center" width="180%"></el-table-column>   
+              <el-table-column label="宿舍信息" prop="dorm" align="center" header-align="center" width="160%"></el-table-column> 
+              <el-table-column label="缴费情况" prop="payment" align="center" width="80%"></el-table-column>
+              <el-table-column label="录入时间" prop="date" align="center" width="95%"></el-table-column>
+               <el-table-column label="注册状态" prop="registe" align="center" width="80%"></el-table-column>
+              <el-table-column label="操作" align="center" width="225%">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
@@ -57,7 +58,7 @@
               </template>
             </el-table-column>
             </el-table>
-            <el-pagination
+            <!-- <el-pagination
               style="margin-top: 16px; text-align:right;"
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -66,7 +67,7 @@
               :page-size="paginations.page_size"
               :layout="paginations.layout"
               :total="paginations.total">
-            </el-pagination>
+            </el-pagination> -->
           </div> 
         </el-card>
       </el-col>
@@ -130,13 +131,13 @@
         dialogAdd:{
           show:false
         },
-				paginations:{
-					page_index:1, //当前页
-					total:0, //总数
-					page_size:10, //一页显示多少
-					page_sizes:[5,10,15,20], //每页显示多少条
-					layout:'total, sizes, prev, pager, next, jumper'
-        },
+				// paginations:{
+				// 	page_index:1, //当前页
+				// 	total:0, //总数
+				// 	page_size:10, //一页显示多少
+				// 	page_sizes:[5,10,15,20], //每页显示多少条
+				// 	layout:'total, sizes, prev, pager, next, jumper'
+        // },
         imageUrl: '',
 				allTableData:[],
         form:{   //编辑信息
@@ -157,27 +158,23 @@
           payment:'',//缴费情况
           date:'',//录入时间
           photo: '',//照片
+          registe:'',//注册状态
+          classmate:''//班级信息
         },
       }
     },
     created () {
-      clearTimeout(this.timer);  //清除持续执行 
-    this.timer = setInterval(()=>{   //设置持续执行获取对比记录
+      clearTimeout(this.timer1);  //清除持续执行 
+    this.timer1 = setInterval(()=>{   //设置持续执行获取对比记录
       //console.log('ok');
+      this.showd();
+    },2000)
+     this.show();
       // this.showd();
-    },4000)
 	},
       
     mounted() {
       this.Mes_Show();
-    //   this.show();
-    //   // this.showd();
-    //   clearTimeout(this.timer);  //清除持续执行 
-    // this.timer = setInterval(()=>{   //设置持续执行获取对比记录
-    //   //console.log('ok');
-    //   this.showd();
-    // },4000)
-
     },
     methods: {
       Mes_Show (scope) {
@@ -188,7 +185,7 @@
           this.loading = false;  
           const data = res.data.data;
           this.allTableData = data;
-          this.setPaginations()
+          // this.setPaginations()
         }) 
       },
       reload () {
@@ -200,36 +197,51 @@
       show(){
         let token =localStorage.getItem('my_token')
         axios.post(`/api/user/public/api/v1.0/list?token=${token}`).then((res)=> {//调用接口获取人员列表
-          console.log(res.data)
+          //console.log(res.data)
         }) 
       },
       showd(){
+        let nowDate = new Date();
+        let date = {
+                        year: nowDate.getFullYear(),
+                        month: nowDate.getMonth() + 1,
+                        date: nowDate.getDate()-1,
+                    }
+                   this.systemDate = date.year + '-'+ date.month + '-' + date.date;
+                   let sjc = Date.parse(this.systemDate);//获取当前日期前三天前时间戳
         let token =localStorage.getItem('my_token')
-        axios.post(`/api/record/public/api/v1.0/list?token=${token}&deviceId=33335WY433337HBY&type=1&startTime=12344 54356&endTime=12455667546`).then((res)=> {//调用接口获取人员列表
-          console.log(res.data)
-          // this.userId = res.data.data[0].userId
-          // var userId = this.userId
-          // this.test(userId)
+        axios.post(`/api/record/public/api/v1.0/list?deviceId=d3f176fc18194c9da4d273187a94b30f&token=${token}&type=1&startTime=${sjc}`).then((res)=> {//调用接口获取对比记录
+          //console.log(res.data.data.length)     
+             for(var i=0;i<res.data.data.length;i++)
+          {
+          //console.log(res.data.data[i].userId)
+          var userId = res.data.data[i].userId
+          var compareTime = res.data.data[i].compareTime
+          //console.log(compareTime)
+           this.test(userId,compareTime)
+          }
         }) 
+        this.Mes_Show();
       },
-      test(userId){
+      test(userId,compareTime){
         var fd  = new FormData()
         fd.append("userId",userId)
-      axios.post(`http://localhost:8081/yxxtcs/Mes_UserId.php`,fd).then(res=>{
-            console.log(res)
+        fd.append("compareTime",compareTime)
+      axios.post(`http://localhost:8081/yxxtcs/Mes_UserId_registe.php`,fd).then(res=>{
+            //console.log(res)
           })
 
       },
-      setPaginations(){
-				this.paginations.total = this.allTableData.length; //数据的数量
-				this.paginations.page_index = 1; //默认显示第一页
-				this.paginations.page_size = 10; //每页显示多少数据
+      // setPaginations(){
+			// 	this.paginations.total = this.allTableData.length; //数据的数量
+			// 	this.paginations.page_index = 1; //默认显示第一页
+			// 	this.paginations.page_size = 10; //每页显示多少数据
 				
-				//显示数据
-				this.tableData = this.allTableData.filter((item,index) => {
-					return index < this.paginations.page_size;
-				})
-			},
+			// 	//显示数据
+			// 	this.tableData = this.allTableData.filter((item,index) => {
+			// 		return index < this.paginations.page_size;
+			// 	})
+			// },
       handleEdit(index,row){ //编辑
         this.dialogEdit.show = true; //显示弹
         this.form = {
@@ -250,7 +262,9 @@
           payment: row.payment,
           photo: row.photo,
           photo_Base64:row.photo_Base64,
-          userId:row.userId
+          userId:row.userId,
+          registe:row.registe,
+          classmate:row.classmate 
         }
       },
       hanldeAdd(){  //添加
@@ -318,6 +332,12 @@
             if(user.sex.includes(keyUser)) {//按性别查找
                 return user
             }
+            if(user.registe.includes(keyUser)) {//按注册状态查找
+                return user
+            }
+             if(user.classmate.includes(keyUser)) {//按注册状态查找
+                return user
+            }
         })
     },
     print(index,row) {
@@ -339,7 +359,8 @@
           phone :row.phone,
           receive :row.receive,
           result : row.result,
-          payment: row.payment
+          payment: row.payment,
+          classmate: row.classmate,
 
         }
       });

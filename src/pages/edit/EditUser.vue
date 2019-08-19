@@ -15,7 +15,7 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               <!-- <i v-else>上传预览</i> -->
             </el-upload>   
-            <img :src="'http://localhost:8081/yxxtcs/upload/'+form.photo" style="position:absolute ;top:1px;left:200px;" class="avatar"> 
+            <img v-if="form.photo" :src="'http://localhost:8081/yxxtcs/upload/'+form.photo" style="position:absolute ;top:1px;left:200px;" class="avatar"> 
           </template>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
@@ -40,6 +40,9 @@
         <el-form-item label="身份证号" prop="message">
           <el-input v-model="form.message"></el-input>
         </el-form-item>
+        <el-form-item label="班级信息" prop="classmate">
+          <el-input v-model="form.classmate"></el-input>
+        </el-form-item>
         <el-form-item label="二级学院" prop="xueyuan">
           <el-input v-model="form.xueyuan"></el-input>
         </el-form-item>
@@ -50,6 +53,16 @@
           <el-select v-model="form.payment" style="width:100%;" placeholder="请选择">
           <el-option
             v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </el-form-item>
+        <el-form-item label="注册状态" prop="registe">
+          <el-select v-model="form.registe" style="width:100%;" placeholder="请选择">
+          <el-option
+            v-for="item in options2"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -109,6 +122,16 @@ export default {
         value: '女',
         label: '女'     
       }],
+      options2: [{
+          value: '已注册',
+          label: '已注册'
+        }, {
+          value: '未注册',
+          label: '未注册'     
+        },{
+          value: '人工处理',
+          label: '人工处理'
+        }],
         value: '',
         flag:'null',//用以判断是否点击上传图片
         photo_url:'',
@@ -127,6 +150,7 @@ export default {
         phone:[{required:true,message:"联系电话不能为空",trigger:"blur"}],
         receive:[{required:true,message:"收件人不能为空",trigger:"blur"}],
         result:[{required:true,message:"投档成绩不能为空",trigger:"blur"}],
+        classmate:[{required:true,message:"班级信息不能为空",trigger:"blur"}],
       }
     }
   },
@@ -153,6 +177,8 @@ export default {
       fd.append("receive",this.form.receive)
       fd.append("result",this.form.result)
       fd.append("payment",this.form.payment)
+      fd.append("registe",this.form.registe)
+      fd.append("classmate",this.form.classmate)
         if(this.form.sex=='男'){
           this.sex ='1'
         }else{
@@ -179,13 +205,15 @@ export default {
                   }else if(userId==''){
                     console.log('更新照片')
                     //调用上传人员接口信息
+                    var picture_Base64 = picture_url.replace(/^data:image\/\w+;base64,/, "")
                     fd.append('file', localStorage.getItem('photo_base64'))
+                    fd.append('Base64', picture_Base64)
                     axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
                       // console.log(res.data)
                     })
                     this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
                   }else{
-                    // console.log('调用')
+                     console.log('调用更新')
                     this.dialogUpdateInterface(base64,token,Sex,name,userId)//调用更新人员接口信息
                   }
                   this.$message({
@@ -195,7 +223,7 @@ export default {
                   this.imageUrl = '';
                   this.dialogEdit.show = false;
                   clearTimeout(this.timer);  //清除延迟执行 
-                  this.timer = setInterval(()=>{   //设置延迟执行
+                  this.timer = setTimeout(()=>{   //设置延迟执行
                     this.$emit('updateEdit');
                   },100)
                   localStorage.removeItem('photo_base64')
