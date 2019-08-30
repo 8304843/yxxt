@@ -209,7 +209,7 @@ export default {
                     fd.append('file', localStorage.getItem('photo_base64'))
                     fd.append('Base64', picture_Base64)
                     axios.post(`http://localhost:8081/yxxtcs/Pic_Upload.php`,fd).then(res => {
-                      // console.log(res.data)
+                      console.log(res.data)
                     })
                     this.dialogAddInterface(picture_url,token,workCode,name)//调用接口上传
                   }else{

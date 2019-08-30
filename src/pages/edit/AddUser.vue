@@ -128,10 +128,10 @@ export default {
       },
       options: [{
           value: '0',
-          label: '已缴费'
+          label: '已验证'
         }, {
           value: '1',
-          label: '未缴费'     
+          label: '未验证'     
         }],
       options1: [{
         value: '1',
@@ -192,10 +192,10 @@ export default {
           fd.append("sex",'女')
         }
         if(this.payment==0){
-          this.payment = '已缴费'
+          this.payment = '已验证'
           fd.append("payment",this.payment)
         }else{
-          this.payment = '未缴费'
+          this.payment = '未验证'
           fd.append("payment",this.payment)
         }
         if(this.registe==0){
@@ -362,6 +362,7 @@ export default {
       this.formDate.receive=''
       this.formDate.result=''
       this.imageUrl = '';
+      this.formDate.classmate= '';
     },
   },
   mounted() {

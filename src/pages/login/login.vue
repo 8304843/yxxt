@@ -120,11 +120,11 @@
         fd.append("username",this.form.username)
         fd.append("password",this.form.password)
         axios.post(`http://localhost:8081/yxxtcs/login.php`,fd).then((res)=> {
-          console.log(res.data)
+          // console.log(res)
           // localStorage.setItem('ms_username',this.form.username);
           // localStorage.setItem('ms_department',res.data.department);
           if(res.data.status == "success"){
-             axios.post(`api/ac/public/api/v1.0/token/get?userName=oa_data&password=e10adc3949ba59abbe56e057f20f883e`).then((response)=> {
+             axios.post(`api/ac/public/api/v1.0/token/get?userName=admin&password=e10adc3949ba59abbe56e057f20f883e`).then((response)=> {
               console.log(response.data.data.accessToken)
               let token = response.data.data.accessToken;
               localStorage.setItem('my_token',token);
