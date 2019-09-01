@@ -32,9 +32,9 @@
               <el-table-column  label="姓名" prop="name" align="center" width="150%"></el-table-column>
               <el-table-column  label="suerid" prop="userId" align="center" v-if="hideRow"></el-table-column>
               <el-table-column  label="base64" prop="photo_Base64" align="center" v-if="hideRow"></el-table-column>
-              <el-table-column label="头像" prop="state" align="center" width="120%" height="200"></el-table-column>
+              <!-- <el-table-column label="头像" prop="state" align="center" width="120%" height="200"></el-table-column> -->
               <el-table-column  label="班级信息" prop="classmate" align="center"  width="180%" ></el-table-column>
-              <el-table-column label="考生号" prop="num" align="center" width="210%" header-align="center"></el-table-column>
+              <!-- <el-table-column label="考生号" prop="num" align="center" width="210%" header-align="center"></el-table-column> -->
               <!-- <el-table-column label="二级学院" prop="xueyuan" align="center" header-align="center" width="170%"></el-table-column> -->
               <el-table-column label="录取专业" prop="zy" align="center" header-align="center" width="260%"></el-table-column>  
               <el-table-column  label="楼栋" prop="building" align="center" v-if="hideRow"></el-table-column> 
@@ -182,6 +182,7 @@
       {
         if(res.data.data[i].onlineStatus=='1'){
         this.deviceId = res.data.data[i].deviceId;
+        //console.log(res.data.data[i].deviceId)
         }
       }
     })
@@ -215,17 +216,12 @@
         }) 
       },
       showd(){
-        let nowDate = new Date();
-        let date = {
-          year: nowDate.getFullYear(),
-          month: nowDate.getMonth() + 1,
-          date: nowDate.getDate(),
-        }
-        this.systemDate = date.year + '-'+ date.month + '-' + date.date;
-        let sjc = Date.parse(this.systemDate);//获取当前日期前一天前时间戳
+        // var timestamp = ((new Date()).getTime()-5*60*1000);//获取当前5分钟时间戳
+        var timestamp = ((new Date()).getTime()-72*60*60*1000);//获取当前3天前时间戳
+        //console.log(timestamp)
         let token =localStorage.getItem('my_token')
-        axios.post(`/api/record/public/api/v1.0/list?deviceId=${this.deviceId}&token=${token}&type=1&startTime=${sjc}`).then((res)=> {//调用接口获取对比记录
-          // console.log(res.data.data.length)
+        axios.post(`/api/record/public/api/v1.0/list?deviceId=${this.deviceId}&token=${token}&type=1&startTime=${timestamp}`).then((res)=> {//调用接口获取对比记录
+           console.log(res.data.data.length)
              for(var i=0;i<res.data.data.length;i++)
           {
           //console.log(res.data.data[i].userId)
